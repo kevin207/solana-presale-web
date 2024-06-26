@@ -8,7 +8,7 @@ const About = () => {
       <div className="flex flex-col lg:flex-row w-full max-w-7xl gap-5 justify-center items-center px-5 py-20">
         <div className="flex flex-col w-full h-fit">
           <h2 className="text-main font-medium text-4xl mb-5 selection:bg-accent">
-            About Crypto ICO
+            About TM ICO
           </h2>
           <p className="text-accent font-light text-base selection:bg-main selection:text-accent">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius,

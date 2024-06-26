@@ -9,7 +9,7 @@ const TokenEconomics = () => {
       <BonusDetails />
 
       <button className="bg-main text-white font-medium px-10 py-4 rounded-sm hover:bg-secondary duration-300 ease-in-out">
-        Buy ICO Crypto Tokens Now
+        Buy TM ICO Tokens Now
       </button>
     </section>
   );

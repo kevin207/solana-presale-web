@@ -9,7 +9,7 @@ export const navigations = [
 ];
 
 export const features = [
-  { name: "ICO Crypto", path: "#" },
+  { name: "TM ICO", path: "#" },
   { name: "Company Number ALX455", path: "#" },
   { name: "2237 Gnatty Creek Road", path: "#" },
   { name: "Huntington, NY 11743", path: "#" },
