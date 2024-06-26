@@ -44,7 +44,7 @@ const CommunityList = () => {
       <div className="flex flex-row gap-2">
         {comumunities.map((community) => (
           <div
-            className="h-8 w-8 cursor-pointer bg-violet-700  rounded-full flex items-center justify-center hover:bg-teal-400 ease-in-out duration-500"
+            className="h-8 w-8 cursor-pointer bg-violet-700  rounded-full flex items-center justify-center hover:bg-main ease-in-out duration-300"
             key={community.label}
           >
             {community.icon}
