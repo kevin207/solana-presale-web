@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 
 const PresaleForm = () => {
-  const { isDisconnected } = useAccount();
+  const { isConnecting, status } = useAccount();
 
   return (
     <div className="h-fit bg-violet-900 rounded-md w-full font-light">
@@ -44,7 +44,7 @@ const PresaleForm = () => {
       <div className="w-full h-[1px] bg-violet-500" />
 
       <div className="flex flex-row gap-6 p-8 items-center">
-        {isDisconnected ? (
+        {status === "disconnected" || isConnecting ? (
           <ConnectKitButton.Custom>
             {({ show }) => (
               <button
