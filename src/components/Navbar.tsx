@@ -3,6 +3,8 @@ import React from "react";
 import Image from "next/image";
 import MobileNav from "./MobileNav";
 import { navigations } from "@/constants/common";
+import { ConnectKitButton } from "connectkit";
+import ConnectWallet from "./ConnectWallet";
 
 const Navbar = () => {
   
@@ -28,9 +30,7 @@ const Navbar = () => {
       </ul>
 
       <div className="flex flex-row items-center justify-center">
-        <button className="bg-main text-accent px-4 py-3 rounded-lg font-semibold whitespace-nowrap mr-2">
-          Connect Wallet
-        </button>
+        <ConnectWallet />
         <MobileNav />
       </div>
     </nav>

@@ -9,10 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.48.0",
+    "connectkit": "^1.8.2",
     "next": "14.2.4",
     "particles.js": "^2.0.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "viem": "^2.16.2",
+    "wagmi": "^2.10.7"
   },
   "devDependencies": {
     "@types/node": "^20",
