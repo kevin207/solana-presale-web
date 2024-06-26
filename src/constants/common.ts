@@ -35,11 +35,11 @@ export const economicsCardData = [
   },
   {
     amount: "20,000,000",
-    title: "HARDCAP (ICOX)",
+    title: "HARDCAP (TMX)",
   },
   {
     amount: "5,000,000",
-    title: "SOFTCAP (ICOX)",
+    title: "SOFTCAP (TMX)",
   },
   {
     amount: "14,400,000",

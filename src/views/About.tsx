@@ -38,7 +38,7 @@ const About = () => {
                   className="bg-main rounded-full p-2 ring-2 ring-white"
                 />
                 <p className="font-light text-accent text-base">
-                  Makes you the sole owner of a secure decentralize registry
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                 </p>
               </div>
               <div className="flex flex-row items-center justify-center space-x-5">
@@ -50,7 +50,7 @@ const About = () => {
                   className="bg-secondary rounded-full p-2 ring-2 ring-white"
                 />
                 <p className="font-light text-accent text-base">
-                  Makes you the sole owner of a secure decentralize registry
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                 </p>
               </div>
             </div>
@@ -65,7 +65,7 @@ const About = () => {
                   className="bg-main rounded-full p-2 ring-2 ring-white"
                 />
                 <p className="font-light text-accent text-base">
-                  Makes you the sole owner of a secure decentralize registry
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                 </p>
               </div>
               <div className="flex flex-row items-center justify-center space-x-5">
@@ -77,7 +77,7 @@ const About = () => {
                   className="bg-secondary rounded-full p-2 ring-2 ring-white"
                 />
                 <p className="font-light text-accent text-base">
-                  Makes you the sole owner of a secure decentralize registry
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                 </p>
               </div>
             </div>

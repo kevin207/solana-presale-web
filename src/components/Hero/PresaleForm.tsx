@@ -14,7 +14,7 @@ const PresaleForm = () => {
         <div className="flex flex-row lg:gap-24 mt-12 justify-between lg:justify-normal">
           <div className="space-y-2">
             <div className="text-xs text-violet-400">TOKEN PRICE:</div>
-            <div className="text-2xl text-white">1 ICOX=$0.02</div>
+            <div className="text-2xl text-white">1 TMX=$0.02</div>
           </div>
 
           <div className="space-y-2">
@@ -31,7 +31,7 @@ const PresaleForm = () => {
             TOKEN AVAILABLE ON PRE-SALE:
           </div>
           <div className="flex flex-row text-2xl">
-            90,000,000 <span className="ml-2">ICOX</span>
+            90,000,000 <span className="ml-2">TMX</span>
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@ const PresaleForm = () => {
         </button>
         <div>
           <div className="text-xs text-violet-400">MINUMUM PURCHASE</div>
-          <div>10,000 ICOX</div>
+          <div>10,000 TMX</div>
         </div>
       </div>
     </div>
