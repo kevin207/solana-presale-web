@@ -12,8 +12,8 @@ export default function Home() {
       <HeroSection />
       <About />
       <MoreAbout />
-      <Footer />
       <TokenEconomics />
+      <Footer />
     </main>
   );
 }
