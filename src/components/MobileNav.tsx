@@ -14,11 +14,11 @@ const MobileNav = () => {
     <>
       <button onClick={handleMenu}>
         <Image
-          src="/assets/hamburger.svg"
+          src="/assets/icons/hamburger.svg"
           width={36}
           height={36}
           alt="Menu"
-          className="invert-colors md:hidden"
+          className="invert-colors md:hidden ml-2"
         />
       </button>
       <nav
@@ -29,7 +29,7 @@ const MobileNav = () => {
         <div className="flex flex-row w-full h-full items-center justify-between px-3">
           <Link href="/" className="flex justify-center gap-1">
             <Image
-              src="/assets/icon-full.svg"
+              src="/assets/icons/icon-full.svg"
               width={300}
               height={60}
               alt="logo"
@@ -37,7 +37,7 @@ const MobileNav = () => {
           </Link>
           <button onClick={handleMenu} className="relative right-0">
             <Image
-              src="/assets/close.svg"
+              src="/assets/icons/close.svg"
               width={36}
               height={36}
               alt="Menu"
@@ -49,7 +49,7 @@ const MobileNav = () => {
         <ul className="flex flex-col w-full h-full items-start justify-start p-5 space-y-2">
           {navigations.map((nav, index: number) => (
             <li key={index}>
-              <Link href={nav.path}>
+              <Link href={nav.path} onClick={handleMenu}>
                 <span className="text-accent text-xl whitespace-nowrap">
                   {nav.name}
                 </span>
