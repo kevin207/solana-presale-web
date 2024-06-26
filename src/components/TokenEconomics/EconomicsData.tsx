@@ -10,8 +10,10 @@ const EconomicsData = () => {
           ICO Crypto <br /> Token Economics
         </div>
         <div className="text-center text-lg font-light text-violet-300 w-[80%] lg:2-[60%] mx-auto">
-          Our initial coin offering will run till softcap reached. Full details
-          of the ICO can be found within the platform.
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam
+          dolores dicta temporibus soluta rerum ea aspernatur quam, consectetur
+          cumque sint reprehenderit suscipit expedita earum iste, eaque id
+          inventore consequuntur nam!
         </div>
       </div>
 
