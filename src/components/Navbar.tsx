@@ -7,7 +7,7 @@ import ConnectWallet from "./ConnectWallet";
 
 const Navbar = () => {
   return (
-    <nav className="flex z-10 fixed top-0 py-4 bg-violet-800 w-full items-center justify-center">
+    <nav className="flex z-30 fixed top-0 py-4 bg-violet-800 w-full items-center justify-center">
       <div className="flex flex-row w-full max-w-7xl justify-between px-8 lg:px-0 items-center">
         <Link href="/" className="hidden lg:flex items-center gap-1">
           <Image
