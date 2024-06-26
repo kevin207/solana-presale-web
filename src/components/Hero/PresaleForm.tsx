@@ -39,7 +39,7 @@ const PresaleForm = () => {
       <div className="w-full h-[1px] bg-violet-500" />
 
       <div className="flex flex-row gap-6 p-8 items-center">
-        <button className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-violet-400 duration-500 ease-in-out">
+        <button className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out">
           Buy Tokens With 45% Off
         </button>
         <div>
