@@ -1,8 +1,13 @@
+"use client";
 import React from "react";
 import CustomCountdown from "./CustomCountdown";
 import { FaEthereum } from "react-icons/fa";
+import { useAccount } from "wagmi";
+import { ConnectKitButton } from "connectkit";
 
 const PresaleForm = () => {
+  const { isDisconnected } = useAccount();
+
   return (
     <div className="h-fit bg-violet-900 rounded-md w-full font-light">
       <div className="p-8">
@@ -39,9 +44,23 @@ const PresaleForm = () => {
       <div className="w-full h-[1px] bg-violet-500" />
 
       <div className="flex flex-row gap-6 p-8 items-center">
-        <button className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out">
-          Buy Tokens With 45% Off
-        </button>
+        {isDisconnected ? (
+          <ConnectKitButton.Custom>
+            {({ show }) => (
+              <button
+                onClick={show}
+                className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out"
+              >
+                Connect Wallet
+              </button>
+            )}
+          </ConnectKitButton.Custom>
+        ) : (
+          <button className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out">
+            Buy Tokens With 45% Off
+          </button>
+        )}
+
         <div>
           <div className="text-xs text-violet-400">MINUMUM PURCHASE</div>
           <div>10,000 TMX</div>
