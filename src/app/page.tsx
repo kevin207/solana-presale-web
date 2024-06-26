@@ -1,13 +1,17 @@
 import Navbar from "@/components/Navbar";
 import About from "@/views/About";
+import Footer from "@/views/Footer";
 import HeroSection from "@/views/HeroSection";
+import MoreAbout from "@/views/MoreAbout";
 
 export default function Home() {
   return (
-    <main className="flex w-full min-h-screen flex-col items-center justify-start p-5 bg-violet-800">
+    <main className="flex w-full min-h-screen flex-col items-center justify-start bg-violet-800">
       <Navbar />
       <HeroSection />
       <About />
+      <MoreAbout />
+      <Footer />
     </main>
   );
 }
