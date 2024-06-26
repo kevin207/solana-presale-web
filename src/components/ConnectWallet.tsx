@@ -1,12 +1,10 @@
-'use client'
+"use client";
 
-import { ConnectKitButton } from 'connectkit'
-import React from 'react'
+import { ConnectKitButton } from "connectkit";
+import React from "react";
 
 const ConnectWallet = () => {
-  return (
-    <ConnectKitButton />
-  )
-}
+  return <ConnectKitButton label="Buy Token" />;
+};
 
-export default ConnectWallet
+export default ConnectWallet;

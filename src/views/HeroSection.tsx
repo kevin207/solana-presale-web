@@ -5,8 +5,8 @@ import React from "react";
 
 const HeroSection = () => {
   return (
-    <section className="min-h-screen flex items-center pt-28 pb-20 lg:pt-0 lg:pb-0 px-8">
-      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-24 lg:gap-40 h-full text-white items-center">
+    <section className="min-h-screen bg-violet-800 flex items-center pt-28 pb-20 lg:pt-0 lg:pb-0 px-8 ">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-24 lg:gap-40 h-full text-white items-center">
         {/* TITLE */}
         <div className="flex flex-col gap-7 items-center lg:items-start">
           <h1 className="text-4xl leading-snug font-light text-center lg:text-left">
