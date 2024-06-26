@@ -22,7 +22,7 @@ const MobileNav = () => {
         />
       </button>
       <nav
-        className={`flex lg:hidden flex-col left-0 top-0 w-full items-center justify-start h-fit py-5 bg-main ${
+        className={`flex lg:hidden flex-col left-0 top-0 w-full items-center justify-start h-fit py-5 bg-violet-800 ${
           isOpen ? "absolute" : "hidden"
         }`}
       >
@@ -46,11 +46,11 @@ const MobileNav = () => {
           </button>
         </div>
 
-        <ul className="flex flex-col w-full h-full items-start justify-start p-5 space-y-2">
+        <ul className="flex flex-col w-full h-full items-start justify-start p-5 space-y-3">
           {navigations.map((nav, index: number) => (
             <li key={index}>
               <Link href={nav.path} onClick={handleMenu}>
-                <span className="text-accent text-xl whitespace-nowrap">
+                <span className="text-accent text-xl whitespace-nowrap hover:text-main duration-300">
                   {nav.name}
                 </span>
               </Link>
