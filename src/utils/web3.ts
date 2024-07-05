@@ -1,5 +1,6 @@
 import { readContract, writeContract } from "@wagmi/core";
 import presaleAbi from "./presaleAbi.json";
+import usdtInterfaceAbi from "./usdtInterfaceAbi.json";
 import tokenAbi from "./tokenAbi.json";
 import { BigNumberish, ethers } from "ethers";
 import { config } from "@/providers/web3-provider";
@@ -84,11 +85,25 @@ export const buyWithUSDT = async (amountOfUSDT: string) => {
   const usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 6);
 
   try {
+    const approval = await writeContract(config, {
+      abi: usdtInterfaceAbi,
+      address: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
+      functionName: "approve",
+      args: [
+        "0xf34192DeEbB702a08aB048A8940938e6CF85522e",
+        "1000000000000000000000",
+      ],
+    });
+
+    if (!approval) {
+      return null;
+    }
+
     const result = await writeContract(config, {
       abi: presaleAbi,
       address: "0xf34192DeEbB702a08aB048A8940938e6CF85522e",
       functionName: "buyWithUSDT",
-      value: usdtAmountInWei,
+      args: [`${usdtAmountInWei}`],
     });
 
     return result;

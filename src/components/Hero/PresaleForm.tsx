@@ -38,6 +38,7 @@ const PresaleForm = () => {
       result = await buyWithETH(`${amount}`);
       if (result && result.includes("0x")) {
         console.log("Success Buy With ETH!");
+        setAmount(0);
       } else {
         console.log("Cancelled / Failed");
       }
@@ -45,6 +46,7 @@ const PresaleForm = () => {
       result = await buyWithUSDT(`${amount}`);
       if (result && result.includes("0x")) {
         console.log("Success Buy With USDT!");
+        setAmount(0);
       } else {
         console.log("Cancelled / Failed");
       }
