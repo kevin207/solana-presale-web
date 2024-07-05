@@ -50,7 +50,7 @@ const CustomCountdown = () => {
   };
 
   // Use Countdown component from react-countdown
-  return <Countdown date={Date.now() + 92358323} renderer={renderer} />;
+  return <Countdown date={Date.now() + 392358323} renderer={renderer} />;
 };
 
 export default CustomCountdown;

@@ -1,30 +1,27 @@
 "use client";
 
-import { mainnet } from "wagmi/chains"; // import the supported chains for your app
-import {
-  WagmiProvider,
-  createConfig,
-  http,
-} from "wagmi";
+import { sepolia } from "wagmi/chains"; // import the supported chains for your app
+import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
-const config = createConfig(
+const ENDPOINT = process.env.NEXT_PUBLIC_API_URL_ETH_SEPOLIA!;
+
+export const config = createConfig(
   getDefaultConfig({
-    chains: [mainnet],
+    chains: [sepolia],
     transports: {
-      [mainnet.id]: http(
-        `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID!}`,
-      ),
+      [sepolia.id]: http(ENDPOINT),
     },
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
     appName: "Boilerplate Wallet & CI/CD",
 
     // Optional App Info
-    appDescription: "This is a boilerplate for a wallet application that is ready for development. It includes CI/CD with GitHub Actions, wallet connection, and balance. It is built with Next.js, TypeScript, Tailwind CSS, and Vercel. It is also optimized for SEO and performance.",
+    appDescription:
+      "This is a boilerplate for a wallet application that is ready for development. It includes CI/CD with GitHub Actions, wallet connection, and balance. It is built with Next.js, TypeScript, Tailwind CSS, and Vercel. It is also optimized for SEO and performance.",
     appUrl: "https://boilerplate-wallet.vercel.app",
     appIcon: "https://family.co/logo.png",
-  }),
+  })
 );
 
 const queryClient = new QueryClient();
