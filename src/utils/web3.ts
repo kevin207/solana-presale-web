@@ -5,6 +5,17 @@ import tokenAbi from "./tokenAbi.json";
 import { BigNumberish, ethers } from "ethers";
 import { config } from "@/providers/web3-provider";
 
+async function convertToUsd(wei: BigNumberish) {
+  const eth = ethers.formatUnits(wei, "ether");
+  const rate = await getLatestEthPrice();
+  const usdValue = parseFloat(eth) * rate;
+
+  const factor = Math.pow(10, 4);
+  const result = Math.floor(usdValue * factor) / factor;
+
+  return result;
+}
+
 async function getLatestEthPrice(): Promise<number> {
   const result = await readContract(config, {
     abi: presaleAbi,
@@ -17,19 +28,8 @@ async function getLatestEthPrice(): Promise<number> {
   const divisor = BigInt(10 ** 18);
   const adjustedValue = Number(bigIntValue) / Number(divisor);
 
-  const finalValue = adjustedValue.toFixed(2);
+  const finalValue = adjustedValue.toFixed(2); // Already on USD
   return parseFloat(finalValue);
-}
-
-async function convertToUsd(wei: BigNumberish) {
-  const eth = ethers.formatUnits(wei, "ether");
-  const rate = await getLatestEthPrice();
-  const usdValue = parseFloat(eth) * rate;
-
-  const factor = Math.pow(10, 4);
-  const result = Math.floor(usdValue * factor) / factor;
-
-  return result;
 }
 
 export const getCurrentPrice = async () => {
@@ -110,5 +110,38 @@ export const buyWithUSDT = async (amountOfUSDT: string) => {
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+// CONVERSION
+const ethToTmx = async (ethAmount: number) => {
+  const ethToUsdRate = await getLatestEthPrice(); // 1 ETH = Around $2842.66 (08/07/2024)
+  const tmxToUsdRate = await getCurrentPrice(); // 1 TMX = $0.4208
+
+  const usdAmount = ethAmount * ethToUsdRate; // Convert ETH to USD
+  const tmxAmount = usdAmount / tmxToUsdRate; // Convert USD to TMX
+
+  // Round to the specified precision (3 decimal places)
+  const factor = Math.pow(10, 3);
+  const result = Math.round(tmxAmount * factor) / factor;
+  return result.toLocaleString("en-US");
+};
+const usdtToTmx = async (usdtAmount: number) => {
+  const tmxToUsdRate = await getCurrentPrice();
+  const tmxAmount = usdtAmount / tmxToUsdRate; // Convert USDT to TMX
+
+  // Round to the specified precision (3 decimal places)
+  const factor = Math.pow(10, 3);
+  const result = Math.round(tmxAmount * factor) / factor;
+  return result.toLocaleString("en-US");
+};
+
+export const countReceivedToken = async (amount: number, token: string) => {
+  if (token === "ETH") {
+    return ethToTmx(amount);
+  } else if (token === "USDT") {
+    return usdtToTmx(amount);
+  } else {
+    return "0";
   }
 };

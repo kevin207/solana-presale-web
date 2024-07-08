@@ -2,20 +2,20 @@
 import React from "react";
 import Countdown from "react-countdown";
 
-interface CustomCountdownProps {
+interface PresaleCountdownProps {
   days: number;
   hours: number;
   minutes: number;
   seconds: number;
 }
 
-const CustomCountdown = () => {
+const PresaleCountdown = () => {
   const renderer = ({
     days,
     hours,
     minutes,
     seconds,
-  }: CustomCountdownProps) => {
+  }: PresaleCountdownProps) => {
     return (
       <div className="grid grid-cols-4 gap-8">
         <div className="flex flex-col gap-1 items-center justify-center">
@@ -50,7 +50,14 @@ const CustomCountdown = () => {
   };
 
   // Use Countdown component from react-countdown
-  return <Countdown date={Date.now() + 392358323} renderer={renderer} />;
+  return (
+    <>
+      <div className="text-center text-2xl mb-5 font-light">
+        Pre-sale Ends In
+      </div>
+      <Countdown date={Date.now() + 392358323} renderer={renderer} />
+    </>
+  );
 };
 
-export default CustomCountdown;
+export default PresaleCountdown;
