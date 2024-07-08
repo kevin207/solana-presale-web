@@ -8,6 +8,7 @@ import {
   buyWithUSDT,
   countReceivedToken,
   getCurrentPrice,
+  getTransferByAddress,
   getTotalSupply,
 } from "@/utils/web3";
 import PresaleCountdown from "./PresaleCountdown";
@@ -17,8 +18,9 @@ const PresaleForm = () => {
   const [price, setPrice] = useState<number>(0);
   const [totalSupply, setTotalSupply] = useState<string>("0");
   const [selected, setSelected] = useState<string>("ETH");
-  const [amount, setAmount] = useState<number>(0);
   const [received, setReceived] = useState<string>("0");
+  const [purchased, setPurchased] = useState<string>("0");
+  const [amount, setAmount] = useState<number>(0);
 
   const maxUsdt = useBalance({
     address: address,
@@ -85,6 +87,10 @@ const PresaleForm = () => {
     getReceivedToken();
   }, [amount, selected]);
 
+  useEffect(() => {
+    getTransferByAddress(address as string);
+  }, [address]);
+
   return (
     <div className="h-fit bg-violet-900 rounded-md w-full font-light">
       <div className="p-8">
@@ -93,7 +99,7 @@ const PresaleForm = () => {
         <div className="flex flex-row lg:gap-24 mt-12 justify-between lg:justify-normal">
           <div className="space-y-2">
             <div className="text-xs text-violet-400">TOKEN PRICE:</div>
-            <div className="text-2xl text-white">1 TMX = ${price}</div>
+            <div className="text-2xl text-white">1 TMT = ${price}</div>
           </div>
 
           <div className="space-y-2">
@@ -110,7 +116,7 @@ const PresaleForm = () => {
             TOKEN AVAILABLE ON PRE-SALE:
           </div>
           <div className="flex flex-row text-2xl">
-            {totalSupply} <span className="ml-2">TMX</span>
+            {totalSupply} <span className="ml-2">TMT</span>
           </div>
         </div>
 
@@ -145,8 +151,8 @@ const PresaleForm = () => {
             <input
               max={
                 selected === "ETH"
-                  ? parseFloat(maxEth as string)
-                  : parseFloat(maxUsdt as string)
+                  ? parseFloat(maxEth as string) || 0
+                  : parseFloat(maxUsdt as string) || 0
               }
               min={0}
               type="number"
@@ -157,7 +163,7 @@ const PresaleForm = () => {
             />
           </div>
           <div className="w-[50%] space-y-2">
-            <label>Received TMX</label>
+            <label>Received TMT</label>
             <input
               readOnly
               value={received}
@@ -177,9 +183,9 @@ const PresaleForm = () => {
             {({ show }) => (
               <button
                 onClick={show}
-                className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out"
+                className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out w-full"
               >
-                Connect Wallet
+                Connect Wallet To Buy Token
               </button>
             )}
           </ConnectKitButton.Custom>
@@ -196,9 +202,9 @@ const PresaleForm = () => {
           </ConnectKitButton.Custom>
         )}
 
-        <div>
-          <div className="text-xs text-violet-400">MINUMUM PURCHASE</div>
-          <div>10,000 TMX</div>
+        <div className={`${status !== "connected" && "hidden"}`}>
+          <div className="text-xs text-violet-400">PURCHASED TOKEN</div>
+          <div>{purchased} TMT</div>
         </div>
       </div>
     </div>

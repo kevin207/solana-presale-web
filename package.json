@@ -21,7 +21,8 @@
     "react-countdown": "^2.3.5",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
-    "viem": "^2.16.2",
+    "usehooks-ts": "^3.1.0",
+    "viem": "^2.17.3",
     "wagmi": "^2.10.7"
   },
   "devDependencies": {
