@@ -113,7 +113,7 @@ export const buyWithUSDT = async (amountOfUSDT: string) => {
   }
 };
 
-// CONVERSION
+// CONVERSION TO TMT
 const ethToTmx = async (ethAmount: number) => {
   const ethToUsdRate = await getLatestEthPrice(); // 1 ETH = Around $2842.66 (08/07/2024)
   const tmxToUsdRate = await getCurrentPrice(); // 1 TMX = $0.4208
@@ -126,6 +126,7 @@ const ethToTmx = async (ethAmount: number) => {
   const result = Math.round(tmxAmount * factor) / factor;
   return result.toLocaleString("en-US");
 };
+
 const usdtToTmx = async (usdtAmount: number) => {
   const tmxToUsdRate = await getCurrentPrice();
   const tmxAmount = usdtAmount / tmxToUsdRate; // Convert USDT to TMX

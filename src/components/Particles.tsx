@@ -44,19 +44,19 @@ export default function BGParticles() {
       },
       interactivity: {
         events: {
-          onClick: {
-            enable: true,
-            mode: "push",
-          },
+          // onClick: {
+          //   enable: true,
+          //   mode: "push",
+          // },
           onHover: {
             enable: true,
             mode: "repulse",
           },
         },
         modes: {
-          push: {
-            quantity: 4,
-          },
+          // push: {
+          //   quantity: 4,
+          // },
           repulse: {
             distance: 200,
             duration: 0.4,
@@ -88,7 +88,7 @@ export default function BGParticles() {
           density: {
             enable: true,
           },
-          value: 80,
+          value: 100,
         },
         opacity: {
           value: 0.5,
