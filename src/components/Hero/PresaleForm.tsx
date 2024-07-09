@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaEthereum } from "react-icons/fa";
 import { useAccount, useBalance } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import {
@@ -10,17 +9,23 @@ import {
   getCurrentPrice,
   getUserPurchasedToken,
   getTotalSupply,
+  getTotalRaised,
 } from "@/utils/web3";
 import PresaleCountdown from "./PresaleCountdown";
+import RaisedAmount from "./RaisedAmount";
+import { Address } from "viem";
+import useWaitForTxAction from "@/hooks/waitTransaction";
+import PurchasedToken from "./PurchasedToken";
+import TokenSupply from "./TokenSupply";
+import TokenPriceAndChain from "./TokenPriceAndChain";
 
 const PresaleForm = () => {
   const { isConnecting, status, address } = useAccount();
-  const [price, setPrice] = useState<number>(0);
-  const [totalSupply, setTotalSupply] = useState<number>(0);
   const [selected, setSelected] = useState<string>("ETH");
   const [received, setReceived] = useState<string>("0");
-  const [purchased, setPurchased] = useState<number>(0);
   const [amount, setAmount] = useState<number>(0);
+  const [transactionHash, setTransactionHash] = useState<Address | undefined>();
+  const [refetch, setRefetch] = useState<boolean>(false);
 
   const maxUsdt = useBalance({
     address: address,
@@ -32,50 +37,44 @@ const PresaleForm = () => {
 
   const buyToken = async () => {
     if (!amount || amount <= 0) return;
-
     let result;
+
+    // ETH
     if (selected === "ETH") {
       if (amount > parseFloat(maxEth as string)) {
         console.log("Insufficent Amount");
         return;
       }
-
       result = await buyWithETH(`${amount}`);
       if (result && result.includes("0x")) {
         console.log("Success Buy With ETH!");
         setAmount(0);
+        setTransactionHash(result);
       } else {
         console.log("Cancelled / Failed");
       }
-    } else if (selected === "USDT") {
+    }
+    // USDT
+    else if (selected === "USDT") {
       if (amount > parseFloat(maxUsdt as string)) {
         console.log("Insufficent Amount");
         return;
       }
-
-      result = await buyWithUSDT(`${amount}`);
+      result = await buyWithUSDT(`${amount}`, address);
       if (result && result.includes("0x")) {
         console.log("Success Buy With USDT!");
         setAmount(0);
+        setTransactionHash(result);
       } else {
         console.log("Cancelled / Failed");
       }
     }
   };
-
-  useEffect(() => {
-    const getTokenPrice = async () => {
-      const price = await getCurrentPrice();
-      setPrice(price);
-    };
-    const getTokenSupply = async () => {
-      const supply = await getTotalSupply();
-      setTotalSupply(supply);
-    };
-
-    getTokenPrice();
-    getTokenSupply();
-  }, []);
+  const action = () => {
+    setRefetch(!refetch);
+    setTransactionHash(undefined);
+  };
+  useWaitForTxAction({ txHash: transactionHash, action });
 
   useEffect(() => {
     const getReceivedToken = async () => {
@@ -85,50 +84,13 @@ const PresaleForm = () => {
     getReceivedToken();
   }, [amount, selected]);
 
-  useEffect(() => {
-    if (address) {
-      const getPurchasedToken = async () => {
-        const totalPurchased = await getUserPurchasedToken(address);
-        setPurchased(totalPurchased);
-      };
-
-      getPurchasedToken();
-    }
-  }, [address]);
-
   return (
-    <div className="h-fit bg-violet-900 rounded-md w-full font-light">
+    <div className="h-fit bg-violet-900/90 rounded-md w-full font-light">
       <div className="p-8">
         <PresaleCountdown />
-
-        {/* TOKEN PRICE & ACCEPTED CHAIN */}
-        <div className="flex flex-row lg:gap-24 mt-12 justify-between lg:justify-normal">
-          <div className="space-y-2">
-            <div className="text-xs text-violet-400">TOKEN PRICE:</div>
-            <div className="text-2xl text-white">
-              1 TMT = ${price.toLocaleString("en-Us")}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="text-xs text-violet-400">WE ACCEPT:</div>
-            <div className="flex flex-row gap-1 items-center text-2xl">
-              <FaEthereum />
-              <div className="text-white">ETH</div>
-            </div>
-          </div>
-        </div>
-
-        {/* TOKEN SUPPLY */}
-        <div className="flex flex-row gap-4 mt-12 items-center">
-          <div className="text-xs text-violet-400">
-            TOKEN AVAILABLE ON PRE-SALE:
-          </div>
-          <div className="flex flex-row text-2xl">
-            {totalSupply.toLocaleString("en-Us")}{" "}
-            <span className="ml-2">TMT</span>
-          </div>
-        </div>
+        <TokenPriceAndChain />
+        <RaisedAmount refetch={refetch} />
+        <TokenSupply />
 
         {/* INPUT FIELD */}
         <div className="flex flex-row gap-8 items-center pt-8">
@@ -214,10 +176,7 @@ const PresaleForm = () => {
           </ConnectKitButton.Custom>
         )}
 
-        <div className={`${status !== "connected" && "hidden"}`}>
-          <div className="text-xs text-violet-400">PURCHASED TOKEN</div>
-          <div>{purchased.toLocaleString("en-US")} TMT</div>
-        </div>
+        <PurchasedToken address={address} refetch={refetch} status={status} />
       </div>
     </div>
   );

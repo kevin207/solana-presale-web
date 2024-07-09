@@ -4,8 +4,15 @@ import usdtInterfaceAbi from "./usdtInterfaceAbi.json";
 import tokenAbi from "./tokenAbi.json";
 import { ethers, getBigInt } from "ethers";
 import { config } from "@/providers/web3-provider";
-import { createPublicClient, decodeEventLog, formatUnits, http } from "viem";
+import {
+  Address,
+  createPublicClient,
+  decodeEventLog,
+  formatUnits,
+  http,
+} from "viem";
 import { sepolia } from "viem/chains";
+import { Result } from "postcss";
 
 async function convertEthToUsd(eth: number) {
   const rate = await getLatestEthPrice();
@@ -81,22 +88,34 @@ export const buyWithETH = async (amountOnEth: string) => {
   }
 };
 
-export const buyWithUSDT = async (amountOfUSDT: string) => {
+export const buyWithUSDT = async (
+  amountOfUSDT: string,
+  walletAddress: Address | undefined
+) => {
   const usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 6);
 
   try {
-    const approval = await writeContract(config, {
+    const approval = await readContract(config, {
       abi: usdtInterfaceAbi,
       address: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
-      functionName: "approve",
-      args: [
-        "0xf34192DeEbB702a08aB048A8940938e6CF85522e",
-        "1000000000000000000000",
-      ],
+      functionName: "allowance",
+      args: [walletAddress, "0xf34192DeEbB702a08aB048A8940938e6CF85522e"],
     });
 
-    if (!approval) {
-      return null;
+    if (Number(approval) <= 0) {
+      const approve = await writeContract(config, {
+        abi: usdtInterfaceAbi,
+        address: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
+        functionName: "approve",
+        args: [
+          "0xf34192DeEbB702a08aB048A8940938e6CF85522e",
+          "1000000000000000000000",
+        ],
+      });
+
+      if (!approve) {
+        return null;
+      }
     }
 
     const result = await writeContract(config, {
@@ -125,7 +144,6 @@ const ethToTmx = async (ethAmount: number) => {
 
   return tmxAmount.toLocaleString("en-US");
 };
-
 const usdtToTmx = async (usdtAmount: number) => {
   const tmxToUsdRate = await getCurrentPrice();
   const tmxAmount = usdtAmount / tmxToUsdRate; // Convert USDT to TMX
@@ -149,7 +167,7 @@ export const countReceivedToken = async (amount: number, token: string) => {
   }
 };
 
-// PURCHASED TOKEN
+// PURCHASED TOKEN & TOTAL RAISED
 const ENDPOINT = process.env.NEXT_PUBLIC_API_URL_ETH_SEPOLIA!;
 const publicClient = createPublicClient({
   chain: sepolia,
@@ -215,6 +233,59 @@ export const getUserPurchasedToken = async (
 
     const tokenAmount = usdt / tmtPrice;
     total += tokenAmount;
+  }
+
+  return total;
+};
+
+export const getTotalRaised = async () => {
+  let total = 0;
+
+  const contractEvent1 = await publicClient.getContractEvents({
+    address: "0xf34192DeEbB702a08aB048A8940938e6CF85522e",
+    abi: presaleAbi,
+    eventName: "TokensBoughtWithEth",
+
+    fromBlock: "earliest",
+    toBlock: "latest",
+  });
+  const contractEvent2 = await publicClient.getContractEvents({
+    address: "0xf34192DeEbB702a08aB048A8940938e6CF85522e",
+    abi: presaleAbi,
+    eventName: "TokensBoughtWithUsdt",
+
+    fromBlock: "earliest",
+    toBlock: "latest",
+  });
+
+  for (let i = 0; i < contractEvent1.length; i++) {
+    const event = contractEvent1[i];
+    const topics = decodeEventLog({
+      abi: presaleAbi,
+      data: event.data,
+      topics: event.topics,
+    });
+
+    // @ts-expect-error
+    const { ethAmount } = topics.args;
+    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
+    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
+
+    total += ethPrice;
+  }
+  for (let i = 0; i < contractEvent2.length; i++) {
+    const event = contractEvent2[i];
+    const topics = decodeEventLog({
+      abi: presaleAbi,
+      data: event.data,
+      topics: event.topics,
+    });
+
+    // @ts-expect-error
+    const { usdtAmount } = topics.args;
+    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
+
+    total += usdt;
   }
 
   return total;
