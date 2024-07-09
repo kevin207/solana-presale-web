@@ -8,7 +8,7 @@ import {
   buyWithUSDT,
   countReceivedToken,
   getCurrentPrice,
-  getTransferByAddress,
+  getUserPurchasedToken,
   getTotalSupply,
 } from "@/utils/web3";
 import PresaleCountdown from "./PresaleCountdown";
@@ -16,10 +16,10 @@ import PresaleCountdown from "./PresaleCountdown";
 const PresaleForm = () => {
   const { isConnecting, status, address } = useAccount();
   const [price, setPrice] = useState<number>(0);
-  const [totalSupply, setTotalSupply] = useState<string>("0");
+  const [totalSupply, setTotalSupply] = useState<number>(0);
   const [selected, setSelected] = useState<string>("ETH");
   const [received, setReceived] = useState<string>("0");
-  const [purchased, setPurchased] = useState<string>("0");
+  const [purchased, setPurchased] = useState<number>(0);
   const [amount, setAmount] = useState<number>(0);
 
   const maxUsdt = useBalance({
@@ -68,7 +68,6 @@ const PresaleForm = () => {
       const price = await getCurrentPrice();
       setPrice(price);
     };
-
     const getTokenSupply = async () => {
       const supply = await getTotalSupply();
       setTotalSupply(supply);
@@ -83,12 +82,18 @@ const PresaleForm = () => {
       const receivedToken = await countReceivedToken(amount, selected);
       setReceived(receivedToken);
     };
-
     getReceivedToken();
   }, [amount, selected]);
 
   useEffect(() => {
-    getTransferByAddress(address as string);
+    if (address) {
+      const getPurchasedToken = async () => {
+        const totalPurchased = await getUserPurchasedToken(address);
+        setPurchased(totalPurchased);
+      };
+
+      getPurchasedToken();
+    }
   }, [address]);
 
   return (
@@ -96,10 +101,13 @@ const PresaleForm = () => {
       <div className="p-8">
         <PresaleCountdown />
 
+        {/* TOKEN PRICE & ACCEPTED CHAIN */}
         <div className="flex flex-row lg:gap-24 mt-12 justify-between lg:justify-normal">
           <div className="space-y-2">
             <div className="text-xs text-violet-400">TOKEN PRICE:</div>
-            <div className="text-2xl text-white">1 TMT = ${price}</div>
+            <div className="text-2xl text-white">
+              1 TMT = ${price.toLocaleString("en-Us")}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -111,15 +119,18 @@ const PresaleForm = () => {
           </div>
         </div>
 
+        {/* TOKEN SUPPLY */}
         <div className="flex flex-row gap-4 mt-12 items-center">
           <div className="text-xs text-violet-400">
             TOKEN AVAILABLE ON PRE-SALE:
           </div>
           <div className="flex flex-row text-2xl">
-            {totalSupply} <span className="ml-2">TMT</span>
+            {totalSupply.toLocaleString("en-Us")}{" "}
+            <span className="ml-2">TMT</span>
           </div>
         </div>
 
+        {/* INPUT FIELD */}
         <div className="flex flex-row gap-8 items-center pt-8">
           <div className="w-[50%] space-y-2">
             <label>
@@ -177,6 +188,7 @@ const PresaleForm = () => {
       {/* DIVIDER */}
       <div className="w-full h-[1px] bg-violet-500" />
 
+      {/* BUY BUTTON & TOTAL PURCHASED */}
       <div className="flex flex-row gap-6 p-8 items-center">
         {status === "disconnected" || isConnecting ? (
           <ConnectKitButton.Custom>
@@ -204,7 +216,7 @@ const PresaleForm = () => {
 
         <div className={`${status !== "connected" && "hidden"}`}>
           <div className="text-xs text-violet-400">PURCHASED TOKEN</div>
-          <div>{purchased} TMT</div>
+          <div>{purchased.toLocaleString("en-US")} TMT</div>
         </div>
       </div>
     </div>
