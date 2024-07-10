@@ -17,7 +17,6 @@ export default function TokenPriceAndChain({
   chains,
   switchChain,
 }: TokenPriceAndChainProps) {
-  const [price, setPrice] = useState<number>(0);
   const chainId = getChainId(config);
   const availableChains = [
     {
@@ -41,6 +40,8 @@ export default function TokenPriceAndChain({
       imageUrl: "/assets/icons/base.svg",
     },
   ];
+  const [price, setPrice] = useState<number>(0);
+  const [selectedChain, setSelectedChain] = useState<number>();
 
   useEffect(() => {
     const getTokenPrice = async () => {
@@ -49,6 +50,10 @@ export default function TokenPriceAndChain({
     };
     getTokenPrice();
   }, []);
+
+  useEffect(() => {
+    setSelectedChain(chainId);
+  }, [chainId]);
 
   return (
     <div className="flex flex-row lg:gap-24 mt-10 justify-between xl:justify-normal items-center">
@@ -66,11 +71,14 @@ export default function TokenPriceAndChain({
             <button
               key={index}
               className={`border-b-2 pb-1 ${
-                chainId === chain.chainId
+                selectedChain === chain.chainId
                   ? "border-secondary"
                   : "border-transparent"
               }`}
-              onClick={() => switchChain({ chainId: chain.chainId })}
+              onClick={() => {
+                switchChain({ chainId: chain.chainId });
+                // setSelectedChain(chain.chainId);
+              }}
             >
               <Image
                 src={chain.imageUrl}
