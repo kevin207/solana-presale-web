@@ -1,16 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useSwitchChain } from "wagmi";
 import { ConnectKitButton } from "connectkit";
-import {
-  buyWithETH,
-  buyWithUSDT,
-  countReceivedToken,
-  getCurrentPrice,
-  getUserPurchasedToken,
-  getTotalSupply,
-  getTotalRaised,
-} from "@/utils/web3";
+import { buyWithETH, buyWithUSDT, countReceivedToken } from "@/utils/web3";
 import { Address } from "viem";
 import PresaleCountdown from "./PresaleCountdown";
 import RaisedAmount from "./RaisedAmount";
@@ -26,6 +18,7 @@ const PresaleForm = () => {
   const [amount, setAmount] = useState<number>(0);
   const [transactionHash, setTransactionHash] = useState<Address | undefined>();
   const [refetch, setRefetch] = useState<boolean>(false);
+  const { chains, switchChain } = useSwitchChain();
 
   const maxUsdt = useBalance({
     address: address,
@@ -88,10 +81,9 @@ const PresaleForm = () => {
     <div className="h-fit bg-violet-900/90 rounded-md w-full font-light">
       <div className="p-8">
         <PresaleCountdown />
-        <TokenPriceAndChain />
+        <TokenPriceAndChain chains={chains} switchChain={switchChain} />
         <RaisedAmount refetch={refetch} />
         <TokenSupply />
-
         {/* INPUT FIELD */}
         <div className="flex flex-row gap-8 items-center pt-8">
           <div className="w-[50%] space-y-2">
@@ -135,6 +127,7 @@ const PresaleForm = () => {
               className="py-2 px-4 rounded-md outline-none text-black w-full"
             />
           </div>
+
           <div className="w-[50%] space-y-2">
             <label>Received TMT</label>
             <input

@@ -1,10 +1,43 @@
 "use client";
 import { getCurrentPrice } from "@/utils/web3";
 import React, { useEffect, useState } from "react";
-import { FaEthereum } from "react-icons/fa";
+import { Config, useSwitchChain } from "wagmi";
+import Image from "next/image";
+import { Chain } from "wagmi/chains";
+import { SwitchChainMutate } from "wagmi/query";
 
-export default function TokenPriceAndChain() {
+interface TokenPriceAndChainProps {
+  chains: readonly [Chain, ...Chain[]];
+  switchChain: SwitchChainMutate<Config, unknown>;
+}
+
+export default function TokenPriceAndChain({
+  chains,
+  switchChain,
+}: TokenPriceAndChainProps) {
   const [price, setPrice] = useState<number>(0);
+  const availableChains = [
+    {
+      name: "Ethereum",
+      chainId: chains[0].id,
+      imageUrl: "/assets/icons/ethereum.svg",
+    },
+    {
+      name: "Avalanche",
+      chainId: chains[1].id,
+      imageUrl: "/assets/icons/avalanche.svg",
+    },
+    {
+      name: "Binance",
+      chainId: chains[2].id,
+      imageUrl: "/assets/icons/binance.svg",
+    },
+    {
+      name: "Base",
+      chainId: chains[3].id,
+      imageUrl: "/assets/icons/base.svg",
+    },
+  ];
 
   useEffect(() => {
     const getTokenPrice = async () => {
@@ -15,19 +48,30 @@ export default function TokenPriceAndChain() {
   }, []);
 
   return (
-    <div className="flex flex-row lg:gap-24 mt-12 justify-between lg:justify-normal">
-      <div className="space-y-2">
+    <div className="flex flex-row lg:gap-24 mt-12 justify-between xl:justify-normal items-center">
+      <div className="space-y-3">
         <div className="text-xs text-violet-400">TOKEN PRICE:</div>
         <div className="text-2xl text-white">
           1 TMT = ${price.toLocaleString("en-Us")}
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div className="text-xs text-violet-400">WE ACCEPT:</div>
-        <div className="flex flex-row gap-1 items-center text-2xl">
-          <FaEthereum />
-          <div className="text-white">ETH</div>
+        <div className="flex flex-row gap-5">
+          {availableChains.map((chain, index) => (
+            <button
+              key={index}
+              onClick={() => switchChain({ chainId: chain.chainId })}
+            >
+              <Image
+                src={chain.imageUrl}
+                width={chain.name === "Ethereum" ? 25 : 32}
+                height={chain.name === "Ethereum" ? 25 : 32}
+                alt="Menu"
+              />
+            </button>
+          ))}
         </div>
       </div>
     </div>

@@ -168,7 +168,7 @@ export const countReceivedToken = async (amount: number, token: string) => {
 };
 
 // PURCHASED TOKEN & TOTAL RAISED
-const ENDPOINT = process.env.NEXT_PUBLIC_API_URL_ETH_SEPOLIA!;
+const ENDPOINT = process.env.NEXT_PUBLIC_API_URL_ETH!;
 const publicClient = createPublicClient({
   chain: sepolia,
   transport: http(ENDPOINT),

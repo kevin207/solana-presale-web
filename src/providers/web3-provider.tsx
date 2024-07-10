@@ -1,17 +1,23 @@
 "use client";
 
-import { sepolia } from "wagmi/chains"; // import the supported chains for your app
+import { sepolia, avalancheFuji, bscTestnet, baseSepolia } from "wagmi/chains"; // import the supported chains for your app
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
-const ENDPOINT = process.env.NEXT_PUBLIC_API_URL_ETH_SEPOLIA!;
+const ENDPOINT_ETH = process.env.NEXT_PUBLIC_API_URL_ETH!;
+const ENDPOINT_FUJI = process.env.NEXT_PUBLIC_API_URL_AVAX!;
+const ENDPOINT_BSC = process.env.NEXT_PUBLIC_API_URL_BSC!;
+const ENDPOINT_BASE = process.env.NEXT_PUBLIC_API_URL_BASE!;
 
 export const config = createConfig(
   getDefaultConfig({
-    chains: [sepolia],
+    chains: [sepolia, avalancheFuji, bscTestnet, baseSepolia],
     transports: {
-      [sepolia.id]: http(ENDPOINT),
+      [sepolia.id]: http(ENDPOINT_ETH),
+      [baseSepolia.id]: http(ENDPOINT_BASE),
+      [bscTestnet.id]: http(ENDPOINT_BSC),
+      [avalancheFuji.id]: http(ENDPOINT_FUJI),
     },
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
     appName: "Boilerplate Wallet & CI/CD",
