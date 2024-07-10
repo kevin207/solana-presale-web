@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 
 export default function RaisedAmount({ refetch }: { refetch: boolean }) {
   const [raised, setRaised] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const calculatePercentage = () => {
     return Math.min((raised / 200) * 100, 100);
@@ -12,14 +13,18 @@ export default function RaisedAmount({ refetch }: { refetch: boolean }) {
 
   useEffect(() => {
     const getRaisedAmount = async () => {
+      setLoading(true);
       const raised = await getTotalRaised();
       setRaised(raised);
+      setLoading(false);
     };
     getRaisedAmount();
   }, [refetch]);
 
-  return (
-    <div className="w-full my-8 relative py-2 bg-black/20 rounded-full border-white border-2 flex items-center justify-center overflow-hidden">
+  return loading ? (
+    <div className="my-8 h-[50px] animate-pulse w-full rounded-full bg-gray-400" />
+  ) : (
+    <div className="w-full my-8 relative h-[50px] bg-black/20 rounded-full border-white border-2 flex items-center justify-center overflow-hidden">
       <div className="text-3xl text-white z-20 flex items-center justify-center">
         ${raised.toLocaleString("en-US")}{" "}
         <span className="text-xl ml-2"> raised</span>

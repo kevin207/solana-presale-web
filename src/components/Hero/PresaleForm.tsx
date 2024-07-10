@@ -11,9 +11,9 @@ import {
   getTotalSupply,
   getTotalRaised,
 } from "@/utils/web3";
+import { Address } from "viem";
 import PresaleCountdown from "./PresaleCountdown";
 import RaisedAmount from "./RaisedAmount";
-import { Address } from "viem";
 import useWaitForTxAction from "@/hooks/waitTransaction";
 import PurchasedToken from "./PurchasedToken";
 import TokenSupply from "./TokenSupply";
