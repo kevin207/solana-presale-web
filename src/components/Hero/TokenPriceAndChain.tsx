@@ -48,15 +48,15 @@ export default function TokenPriceAndChain({
   }, []);
 
   return (
-    <div className="flex flex-row lg:gap-24 mt-12 justify-between xl:justify-normal items-center">
-      <div className="space-y-3">
+    <div className="flex flex-row lg:gap-24 mt-10 justify-between xl:justify-normal items-center">
+      <div className="space-y-2">
         <div className="text-xs text-violet-400">TOKEN PRICE:</div>
         <div className="text-2xl text-white">
           1 TMT = ${price.toLocaleString("en-Us")}
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         <div className="text-xs text-violet-400">WE ACCEPT:</div>
         <div className="flex flex-row gap-5">
           {availableChains.map((chain, index) => (

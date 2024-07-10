@@ -84,8 +84,9 @@ const PresaleForm = () => {
         <TokenPriceAndChain chains={chains} switchChain={switchChain} />
         <RaisedAmount refetch={refetch} />
         <TokenSupply />
+
         {/* INPUT FIELD */}
-        <div className="flex flex-row gap-8 items-center pt-8">
+        <div className="flex flex-row gap-8 items-center pt-8 pb-6">
           <div className="w-[50%] space-y-2">
             <label>
               Buy with{" "}
@@ -138,13 +139,7 @@ const PresaleForm = () => {
             />
           </div>
         </div>
-      </div>
 
-      {/* DIVIDER */}
-      <div className="w-full h-[1px] bg-violet-500" />
-
-      {/* BUY BUTTON & TOTAL PURCHASED */}
-      <div className="flex flex-row gap-6 p-8 items-center">
         {status === "disconnected" || isConnecting ? (
           <ConnectKitButton.Custom>
             {({ show }) => (
@@ -161,16 +156,31 @@ const PresaleForm = () => {
             {() => (
               <button
                 onClick={buyToken}
-                className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out"
+                className="py-4 px-6 w-full text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out"
               >
                 Buy Tokens With 45% Off
               </button>
             )}
           </ConnectKitButton.Custom>
         )}
-
-        <PurchasedToken address={address} refetch={refetch} status={status} />
       </div>
+
+      {/* TOTAL PURCHASED & CLAIM */}
+      {status === "connected" && (
+        <>
+          <div className="w-full h-[1px] bg-violet-500" />
+          <div className="flex flex-row gap-4 px-8 py-6 justify-between items-center">
+            <PurchasedToken
+              address={address}
+              refetch={refetch}
+              status={status}
+            />
+            <button className="py-4 px-8 w-fit text-xs font-medium text-white bg-tertiary rounded-sm duration-500 ease-in-out">
+              Claim Token
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };

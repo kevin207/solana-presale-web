@@ -12,7 +12,6 @@ import {
   http,
 } from "viem";
 import { sepolia } from "viem/chains";
-import { Result } from "postcss";
 
 async function convertEthToUsd(eth: number) {
   const rate = await getLatestEthPrice();
