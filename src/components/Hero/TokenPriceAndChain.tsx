@@ -1,10 +1,12 @@
 "use client";
 import { getCurrentPrice } from "@/utils/web3";
 import React, { useEffect, useState } from "react";
-import { Config, useSwitchChain } from "wagmi";
+import { Config } from "wagmi";
+import { getChainId } from "@wagmi/core";
 import Image from "next/image";
 import { Chain } from "wagmi/chains";
 import { SwitchChainMutate } from "wagmi/query";
+import { config } from "@/providers/web3-provider";
 
 interface TokenPriceAndChainProps {
   chains: readonly [Chain, ...Chain[]];
@@ -16,6 +18,7 @@ export default function TokenPriceAndChain({
   switchChain,
 }: TokenPriceAndChainProps) {
   const [price, setPrice] = useState<number>(0);
+  const chainId = getChainId(config);
   const availableChains = [
     {
       name: "Ethereum",
@@ -62,6 +65,11 @@ export default function TokenPriceAndChain({
           {availableChains.map((chain, index) => (
             <button
               key={index}
+              className={`border-b-2 pb-1 ${
+                chainId === chain.chainId
+                  ? "border-secondary"
+                  : "border-transparent"
+              }`}
               onClick={() => switchChain({ chainId: chain.chainId })}
             >
               <Image

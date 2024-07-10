@@ -7,10 +7,12 @@ export default function ReferralButton() {
 
   return (
     <div
-      className={`flex flex-row w-[80%] ${status !== "connected" && "hidden"}`}
+      className={`flex flex-row w-full xl:w-[80%] ${
+        status !== "connected" && "hidden"
+      }`}
     >
       <input
-        className="w-[80%] py-3 px-4 rounded-tl-sm rounded-bl-sm text-tertiary text-sm"
+        className="w-full py-3 px-4 rounded-tl-sm rounded-bl-sm text-tertiary text-sm"
         type="text"
         readOnly
         value={"tokenminds-ico-demo.vercel.app?ref=" + address}

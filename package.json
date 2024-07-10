@@ -23,7 +23,8 @@
     "react-icons": "^5.2.1",
     "usehooks-ts": "^3.1.0",
     "viem": "^2.17.3",
-    "wagmi": "^2.10.7"
+    "wagmi": "^2.10.7",
+    "web3": "^4.10.0"
   },
   "devDependencies": {
     "@types/node": "^20",

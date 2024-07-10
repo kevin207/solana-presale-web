@@ -13,20 +13,20 @@ export const features = [
   { name: "Company Number ALX455", path: "#" },
   { name: "2237 Gnatty Creek Road", path: "#" },
   { name: "Huntington, NY 11743", path: "#" },
-]
+];
 
 export const resources = [
   { name: "Whitepaper", path: "#" },
   { name: "One Pager", path: "#" },
   { name: "Market Research", path: "#" },
-]
+];
 
 export const companies = [
   { name: "Home", path: "#" },
   { name: "Tokens", path: "#" },
   { name: "Team", path: "#" },
   { name: "Roadmap", path: "#" },
-]
+];
 
 export const economicsCardData = [
   {
@@ -54,3 +54,6 @@ export const economicsCardData = [
     title: "ACCEPTED CURRENCY",
   },
 ];
+
+export const presaleAddress = "0xeBe953A43DAFFDA49F8cDD33adeC78A880144Ff1";
+export const tokenAddress = "0x68a3CcbEE1eF684323FcaF19Aac27Ec3A3d80DCe";
