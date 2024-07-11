@@ -55,8 +55,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Web3Provider>
-        <Toaster position="bottom-left" reverseOrder={false} />
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <Toaster position="bottom-left" reverseOrder={false} />
+          {children}
+        </body>
       </Web3Provider>
     </html>
   );
