@@ -49,7 +49,7 @@ export default function TokenPriceAndChain({
       setPrice(price);
     };
     getTokenPrice();
-  }, []);
+  }, [chainId]);
 
   useEffect(() => {
     setSelectedChain(chainId);

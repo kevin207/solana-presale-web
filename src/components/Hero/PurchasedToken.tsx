@@ -1,7 +1,9 @@
 "use client";
+import { config } from "@/providers/web3-provider";
 import { getUserPurchasedToken } from "@/utils/web3";
 import React, { useEffect, useState } from "react";
 import { Address } from "viem";
+import { getChainId } from "@wagmi/core";
 
 interface PurchasedTokenProps {
   address: Address | undefined;
@@ -15,6 +17,7 @@ export default function PurchasedToken({
   status,
 }: PurchasedTokenProps) {
   const [purchased, setPurchased] = useState<number>(0);
+  const chainId = getChainId(config);
 
   useEffect(() => {
     if (address) {
@@ -24,7 +27,7 @@ export default function PurchasedToken({
       };
       getPurchasedToken();
     }
-  }, [address, refetch]);
+  }, [address, refetch, chainId]);
 
   return (
     <div className={`${status !== "connected" && "hidden"}`}>

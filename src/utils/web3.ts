@@ -11,14 +11,11 @@ import {
   formatUnits,
   http,
 } from "viem";
-import { sepolia, baseSepolia, bscTestnet, avalancheFuji } from "viem/chains";
+import { sepolia, baseSepolia, avalancheFuji } from "viem/chains";
 import { presaleAddress, tokenAddress } from "@/constants/common";
-
-async function convertEthToUsd(eth: number) {
-  const rate = await getLatestEthPrice();
-  const usdValue = eth * rate;
-  return usdValue;
-}
+import Moralis from "moralis";
+import { initializeMoralis } from "./moralis";
+initializeMoralis();
 
 async function getLatestEthPrice(): Promise<number> {
   const result = await readContract(config, {
@@ -164,26 +161,17 @@ export const countReceivedToken = async (amount: number, token: string) => {
 };
 
 // PURCHASED TOKEN & TOTAL RAISED
-const ENDPOINT_ETH = process.env.NEXT_PUBLIC_API_URL_ETH!;
-const ENDPOINT_AVAX = process.env.NEXT_PUBLIC_API_URL_AVAX!;
-const ENDPOINT_BSC = process.env.NEXT_PUBLIC_API_URL_BSC!;
-const ENDPOINT_BASE = process.env.NEXT_PUBLIC_API_URL_BASE!;
-
 const ethPublicClient = createPublicClient({
   chain: sepolia,
-  transport: http(ENDPOINT_ETH),
+  transport: http(process.env.NEXT_PUBLIC_API_URL_ETH!),
 });
 const avaxPublicClient = createPublicClient({
   chain: avalancheFuji,
-  transport: http(ENDPOINT_AVAX),
-});
-const bscPublicClient = createPublicClient({
-  chain: bscTestnet,
-  transport: http(ENDPOINT_BSC),
+  transport: http(process.env.NEXT_PUBLIC_API_URL_AVAX!),
 });
 const basePublicClient = createPublicClient({
   chain: baseSepolia,
-  transport: http(ENDPOINT_BASE),
+  transport: http(process.env.NEXT_PUBLIC_API_URL_BASE!),
 });
 
 export const getUserPurchasedToken = async (
@@ -191,6 +179,7 @@ export const getUserPurchasedToken = async (
 ): Promise<number> => {
   let total = 0;
 
+  // COUNT TOTAL ON ETH
   const ethContractEvent1 = await ethPublicClient.getContractEvents({
     address: presaleAddress,
     abi: presaleAbi,
@@ -211,6 +200,41 @@ export const getUserPurchasedToken = async (
     fromBlock: "earliest",
     toBlock: "latest",
   });
+  for (let i = 0; i < ethContractEvent1.length; i++) {
+    const event = ethContractEvent1[i];
+    const topics = decodeEventLog({
+      abi: presaleAbi,
+      data: event.data,
+      topics: event.topics,
+    });
+
+    // @ts-expect-error
+    let { ethAmount, ethPrice, tokenPrice } = topics.args;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
+    tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
+
+    const tokenAmount = ethPrice / tokenPrice;
+    total += tokenAmount;
+  }
+  for (let i = 0; i < ethContractEvent2.length; i++) {
+    const event = ethContractEvent2[i];
+    const topics = decodeEventLog({
+      abi: presaleAbi,
+      data: event.data,
+      topics: event.topics,
+    });
+
+    // @ts-expect-error
+    let { usdtAmount, tokenPrice } = topics.args;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
+
+    const tokenAmount = usdtAmount / tokenPrice;
+    total += tokenAmount;
+  }
+
+  // COUNT TOTAL ON AVAX
   const avaxContractEvent1 = await avaxPublicClient.getContractEvents({
     address: presaleAddress,
     abi: presaleAbi,
@@ -231,61 +255,6 @@ export const getUserPurchasedToken = async (
     fromBlock: "earliest",
     toBlock: "latest",
   });
-  const baseContractEvent1 = await basePublicClient.getContractEvents({
-    address: presaleAddress,
-    abi: presaleAbi,
-    eventName: "TokensBoughtWithEth",
-    args: {
-      buyer: walletAddress,
-    },
-    fromBlock: "earliest",
-    toBlock: "latest",
-  });
-  const baseContractEvent2 = await basePublicClient.getContractEvents({
-    address: presaleAddress,
-    abi: presaleAbi,
-    eventName: "TokensBoughtWithUsdt",
-    args: {
-      buyer: walletAddress,
-    },
-    fromBlock: "earliest",
-    toBlock: "latest",
-  });
-
-  for (let i = 0; i < ethContractEvent1.length; i++) {
-    const event = ethContractEvent1[i];
-    const topics = decodeEventLog({
-      abi: presaleAbi,
-      data: event.data,
-      topics: event.topics,
-    });
-
-    // @ts-expect-error
-    const { ethAmount, tokenPrice } = topics.args;
-    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
-
-    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
-    const tmtPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
-
-    const tokenAmount = ethPrice / tmtPrice;
-    total += tokenAmount;
-  }
-  for (let i = 0; i < ethContractEvent2.length; i++) {
-    const event = ethContractEvent2[i];
-    const topics = decodeEventLog({
-      abi: presaleAbi,
-      data: event.data,
-      topics: event.topics,
-    });
-
-    // @ts-expect-error
-    const { usdtAmount, tokenPrice } = topics.args;
-    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
-    const tmtPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
-
-    const tokenAmount = usdt / tmtPrice;
-    total += tokenAmount;
-  }
   for (let i = 0; i < avaxContractEvent1.length; i++) {
     const event = ethContractEvent1[i];
     const topics = decodeEventLog({
@@ -295,13 +264,12 @@ export const getUserPurchasedToken = async (
     });
 
     // @ts-expect-error
-    const { ethAmount, tokenPrice } = topics.args;
-    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
+    let { ethAmount, ethPrice, tokenPrice } = topics.args;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
+    tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
-    const tmtPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
-
-    const tokenAmount = ethPrice / tmtPrice;
+    const tokenAmount = ethPrice / tokenPrice;
     total += tokenAmount;
   }
   for (let i = 0; i < avaxContractEvent2.length; i++) {
@@ -313,13 +281,35 @@ export const getUserPurchasedToken = async (
     });
 
     // @ts-expect-error
-    const { usdtAmount, tokenPrice } = topics.args;
-    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
-    const tmtPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
+    let { usdtAmount, tokenPrice } = topics.args;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const tokenAmount = usdt / tmtPrice;
+    const tokenAmount = usdtAmount / tokenPrice;
     total += tokenAmount;
   }
+
+  // COUNT TOTAL ON BASE
+  const baseContractEvent1 = await basePublicClient.getContractEvents({
+    address: presaleAddress,
+    abi: presaleAbi,
+    eventName: "TokensBoughtWithEth",
+    args: {
+      buyer: walletAddress,
+    },
+    fromBlock: "earliest",
+    toBlock: "latest",
+  });
+  const baseContractEvent2 = await basePublicClient.getContractEvents({
+    address: presaleAddress,
+    abi: presaleAbi,
+    eventName: "TokensBoughtWithUsdt",
+    args: {
+      buyer: walletAddress,
+    },
+    fromBlock: "earliest",
+    toBlock: "latest",
+  });
   for (let i = 0; i < baseContractEvent1.length; i++) {
     const event = ethContractEvent1[i];
     const topics = decodeEventLog({
@@ -329,13 +319,12 @@ export const getUserPurchasedToken = async (
     });
 
     // @ts-expect-error
-    const { ethAmount, tokenPrice } = topics.args;
-    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
+    let { ethAmount, ethPrice, tokenPrice } = topics.args;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
+    tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
-    const tmtPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
-
-    const tokenAmount = ethPrice / tmtPrice;
+    const tokenAmount = ethPrice / tokenPrice;
     total += tokenAmount;
   }
   for (let i = 0; i < baseContractEvent2.length; i++) {
@@ -347,12 +336,121 @@ export const getUserPurchasedToken = async (
     });
 
     // @ts-expect-error
-    const { usdtAmount, tokenPrice } = topics.args;
-    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
-    const tmtPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
+    let { usdtAmount, tokenPrice } = topics.args;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const tokenAmount = usdt / tmtPrice;
+    const tokenAmount = usdtAmount / tokenPrice;
     total += tokenAmount;
+  }
+
+  // COUNT TOTAL ON BSC
+  const bscResponse1 = await Moralis.EvmApi.events.getContractEvents({
+    chain: "0x61",
+    topic: "0xb86e8a722d8c6340ecf92b17168790c6e34eed0efdbf0d26fdff24ca3e0c02ff",
+    order: "DESC",
+    address: presaleAddress,
+    abi: {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          name: "buyer",
+          type: "address",
+          internalType: "address",
+        },
+        {
+          indexed: false,
+          name: "ethAmount",
+          type: "uint256",
+          internalType: "uint256",
+        },
+        {
+          indexed: false,
+          name: "ethPrice",
+          type: "uint256",
+          internalType: "uint256",
+        },
+        {
+          indexed: false,
+          name: "tokenPrice",
+          type: "uint256",
+          internalType: "uint256",
+        },
+        {
+          indexed: false,
+          name: "timestamp",
+          type: "uint256",
+          internalType: "uint256",
+        },
+      ],
+      name: "TokensBoughtWithEth",
+      type: "event",
+    },
+  });
+  const bscContractEvent1 = bscResponse1?.raw.result;
+  const bscResponse2 = await Moralis.EvmApi.events.getContractEvents({
+    chain: "0x61",
+    topic: "0x2e02b9f3fb96e8f4b432fd531dbfa9d9640f8d2f5cc3447fbc6e866143b7f50d",
+    order: "DESC",
+    address: presaleAddress,
+    abi: {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "buyer",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "usdtAmount",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "tokenPrice",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
+      ],
+      name: "TokensBoughtWithUsdt",
+      type: "event",
+    },
+  });
+  const bscContractEvent2 = bscResponse2?.raw.result;
+  for (let i = 0; i < bscContractEvent1.length; i++) {
+    // @ts-expect-error
+    let { ethAmount, ethPrice, tokenPrice, buyer } = bscContractEvent1[i].data;
+
+    if (buyer === walletAddress) {
+      ethAmount = Number(formatUnits(BigInt(ethAmount), 18));
+      ethPrice = Number(formatUnits(BigInt(ethPrice), 18));
+      tokenPrice = Number(formatUnits(BigInt(tokenPrice), 6));
+
+      const tokenAmount = ethPrice / tokenPrice;
+      total += tokenAmount;
+    }
+  }
+  for (let i = 0; i < bscContractEvent2.length; i++) {
+    // @ts-expect-error
+    let { usdtAmount, tokenPrice, buyer } = bscContractEvent2[i].data;
+
+    if (buyer === walletAddress) {
+      usdtAmount = Number(formatUnits(BigInt(usdtAmount), 6));
+      tokenPrice = Number(formatUnits(BigInt(tokenPrice), 6));
+
+      const tokenAmount = usdtAmount / tokenPrice;
+      total += tokenAmount;
+    }
   }
 
   return total;
@@ -361,6 +459,7 @@ export const getUserPurchasedToken = async (
 export const getTotalRaised = async () => {
   let total = 0;
 
+  // COUNT TOTAL ON ETH
   const ethContractEvent1 = await ethPublicClient.getContractEvents({
     address: presaleAddress,
     abi: presaleAbi,
@@ -375,6 +474,37 @@ export const getTotalRaised = async () => {
     fromBlock: "earliest",
     toBlock: "latest",
   });
+  for (let i = 0; i < ethContractEvent1.length; i++) {
+    const event = ethContractEvent1[i];
+    const topics = decodeEventLog({
+      abi: presaleAbi,
+      data: event.data,
+      topics: event.topics,
+    });
+
+    // @ts-expect-error
+    let { ethAmount, ethPrice } = topics.args;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
+
+    const result = ethAmount * ethPrice;
+    total += result;
+  }
+  for (let i = 0; i < ethContractEvent2.length; i++) {
+    const event = ethContractEvent2[i];
+    const topics = decodeEventLog({
+      abi: presaleAbi,
+      data: event.data,
+      topics: event.topics,
+    });
+
+    // @ts-expect-error
+    let { usdtAmount } = topics.args;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    total += usdtAmount;
+  }
+
+  // COUNT TOTAL ON AVAX
   const avaxContractEvent1 = await avaxPublicClient.getContractEvents({
     address: presaleAddress,
     abi: presaleAbi,
@@ -389,50 +519,6 @@ export const getTotalRaised = async () => {
     fromBlock: "earliest",
     toBlock: "latest",
   });
-  const baseContractEvent1 = await basePublicClient.getContractEvents({
-    address: presaleAddress,
-    abi: presaleAbi,
-    eventName: "TokensBoughtWithEth",
-    fromBlock: "earliest",
-    toBlock: "latest",
-  });
-  const baseContractEvent2 = await basePublicClient.getContractEvents({
-    address: presaleAddress,
-    abi: presaleAbi,
-    eventName: "TokensBoughtWithUsdt",
-    fromBlock: "earliest",
-    toBlock: "latest",
-  });
-
-  for (let i = 0; i < ethContractEvent1.length; i++) {
-    const event = ethContractEvent1[i];
-    const topics = decodeEventLog({
-      abi: presaleAbi,
-      data: event.data,
-      topics: event.topics,
-    });
-
-    // @ts-expect-error
-    const { ethAmount } = topics.args;
-    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
-    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
-
-    total += ethPrice;
-  }
-  for (let i = 0; i < ethContractEvent2.length; i++) {
-    const event = ethContractEvent2[i];
-    const topics = decodeEventLog({
-      abi: presaleAbi,
-      data: event.data,
-      topics: event.topics,
-    });
-
-    // @ts-expect-error
-    const { usdtAmount } = topics.args;
-    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
-
-    total += usdt;
-  }
   for (let i = 0; i < avaxContractEvent1.length; i++) {
     const event = avaxContractEvent1[i];
     const topics = decodeEventLog({
@@ -442,11 +528,12 @@ export const getTotalRaised = async () => {
     });
 
     // @ts-expect-error
-    const { ethAmount } = topics.args;
-    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
-    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
+    let { ethAmount, ethPrice } = topics.args;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
 
-    total += ethPrice;
+    const result = ethAmount * ethPrice;
+    total += result;
   }
   for (let i = 0; i < avaxContractEvent2.length; i++) {
     const event = avaxContractEvent2[i];
@@ -457,11 +544,26 @@ export const getTotalRaised = async () => {
     });
 
     // @ts-expect-error
-    const { usdtAmount } = topics.args;
-    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
-
-    total += usdt;
+    let { usdtAmount } = topics.args;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    total += usdtAmount;
   }
+
+  // COUNT TOTAL ON BASE
+  const baseContractEvent1 = await basePublicClient.getContractEvents({
+    address: presaleAddress,
+    abi: presaleAbi,
+    eventName: "TokensBoughtWithEth",
+    fromBlock: "earliest",
+    toBlock: "latest",
+  });
+  const baseContractEvent2 = await basePublicClient.getContractEvents({
+    address: presaleAddress,
+    abi: presaleAbi,
+    eventName: "TokensBoughtWithUsdt",
+    fromBlock: "earliest",
+    toBlock: "latest",
+  });
   for (let i = 0; i < baseContractEvent1.length; i++) {
     const event = baseContractEvent1[i];
     const topics = decodeEventLog({
@@ -471,11 +573,12 @@ export const getTotalRaised = async () => {
     });
 
     // @ts-expect-error
-    const { ethAmount } = topics.args;
-    const eth = Number(formatUnits(getBigInt(ethAmount), 18)); // ON ETH
-    const ethPrice = await convertEthToUsd(eth); // CONVERT TO USD
+    let { ethAmount, ethPrice } = topics.args;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
 
-    total += ethPrice;
+    const result = ethAmount * ethPrice;
+    total += result;
   }
   for (let i = 0; i < baseContractEvent2.length; i++) {
     const event = baseContractEvent2[i];
@@ -486,10 +589,108 @@ export const getTotalRaised = async () => {
     });
 
     // @ts-expect-error
-    const { usdtAmount } = topics.args;
-    const usdt = Number(formatUnits(getBigInt(usdtAmount), 6));
+    let { usdtAmount } = topics.args;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    total += usdtAmount;
+  }
 
-    total += usdt;
+  // COUNT TOTAL ON BSC
+  const bscResponse1 = await Moralis.EvmApi.events.getContractEvents({
+    chain: "0x61",
+    topic: "0xb86e8a722d8c6340ecf92b17168790c6e34eed0efdbf0d26fdff24ca3e0c02ff",
+    order: "DESC",
+    address: presaleAddress,
+    abi: {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          name: "buyer",
+          type: "address",
+          internalType: "address",
+        },
+        {
+          indexed: false,
+          name: "ethAmount",
+          type: "uint256",
+          internalType: "uint256",
+        },
+        {
+          indexed: false,
+          name: "ethPrice",
+          type: "uint256",
+          internalType: "uint256",
+        },
+        {
+          indexed: false,
+          name: "tokenPrice",
+          type: "uint256",
+          internalType: "uint256",
+        },
+        {
+          indexed: false,
+          name: "timestamp",
+          type: "uint256",
+          internalType: "uint256",
+        },
+      ],
+      name: "TokensBoughtWithEth",
+      type: "event",
+    },
+  });
+  const bscContractEvent1 = bscResponse1?.raw.result;
+  const bscResponse2 = await Moralis.EvmApi.events.getContractEvents({
+    chain: "0x61",
+    topic: "0x2e02b9f3fb96e8f4b432fd531dbfa9d9640f8d2f5cc3447fbc6e866143b7f50d",
+    order: "DESC",
+    address: presaleAddress,
+    abi: {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "buyer",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "usdtAmount",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "tokenPrice",
+          type: "uint256",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256",
+        },
+      ],
+      name: "TokensBoughtWithUsdt",
+      type: "event",
+    },
+  });
+  const bscContractEvent2 = bscResponse2?.raw.result;
+  for (let i = 0; i < bscContractEvent1.length; i++) {
+    // @ts-expect-error
+    let { ethAmount, ethPrice } = bscContractEvent1[i].data;
+    ethAmount = Number(formatUnits(getBigInt(ethAmount), 18));
+    ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
+
+    const result = ethAmount * ethPrice;
+    total += result;
+  }
+  for (let i = 0; i < bscContractEvent2.length; i++) {
+    // @ts-expect-error
+    let { usdtAmount } = baseContractEvent2[i].data;
+    usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
+    total += usdtAmount;
   }
 
   return total;
