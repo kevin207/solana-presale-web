@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Web3Provider } from "@/providers/web3-provider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,6 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Web3Provider>
+        <Toaster position="bottom-left" reverseOrder={false} />
         <body className={inter.className}>{children}</body>
       </Web3Provider>
     </html>

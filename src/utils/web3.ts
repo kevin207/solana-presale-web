@@ -106,7 +106,6 @@ export const buyWithUSDT = async (
         functionName: "approve",
         args: [presaleAddress, "1000000000000000000000"],
       });
-
       if (!approve) {
         return null;
       }

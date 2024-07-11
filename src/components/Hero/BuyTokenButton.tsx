@@ -3,6 +3,7 @@ import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { Address } from "viem";
 import { buyWithETH, buyWithUSDT } from "@/utils/web3";
+import toast from "react-hot-toast";
 
 interface BuyTokenButtonProps {
   selected: string;
@@ -29,23 +30,23 @@ export default function BuyTokenButton({
 
   const buyWithNativeToken = async () => {
     if (amount > parseFloat(maxEth as string)) {
-      console.log("Insufficent Amount");
+      toast.error("Insufficent Amount!");
       return;
     }
 
     const result = await buyWithETH(`${amount}`);
     if (result && result.includes("0x")) {
-      console.log("Success Buy With ETH!");
+      toast.success("Successfully Buy Token!");
       setAmount(0);
       setTransactionHash(result);
     } else {
-      console.log("Cancelled / Failed");
+      toast.error("Cancelled / Failed!");
     }
   };
 
   const buyWithStableToken = async () => {
     if (amount > parseFloat(maxUsdt as string)) {
-      console.log("Insufficent Amount");
+      toast.error("Insufficent Amount!");
       return;
     }
 
@@ -55,16 +56,19 @@ export default function BuyTokenButton({
       userAddress
     );
     if (result && result.includes("0x")) {
-      console.log("Success Buy With USDT!");
+      toast.success("Successfully Buy Token!");
       setAmount(0);
       setTransactionHash(result);
     } else {
-      console.log("Cancelled / Failed");
+      toast.error("Cancelled / Failed!");
     }
   };
 
   const buyToken = async () => {
-    if (!amount || amount <= 0) return;
+    if (!amount || amount <= 0) {
+      toast.error("Invalid Amount!");
+      return;
+    }
 
     if (selected === "ETH") {
       await buyWithNativeToken();

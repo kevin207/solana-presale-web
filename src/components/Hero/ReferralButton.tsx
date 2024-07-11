@@ -1,9 +1,17 @@
 "use client";
 import React from "react";
+import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 
 export default function ReferralButton() {
   const { status, address } = useAccount();
+
+  const copyReferral = async () => {
+    await navigator.clipboard.writeText(
+      "tokenminds-ico-demo.vercel.app?ref=" + address
+    );
+    toast.success("Referral copied to cliboard!");
+  };
 
   return (
     <div
@@ -17,7 +25,10 @@ export default function ReferralButton() {
         readOnly
         value={"tokenminds-ico-demo.vercel.app?ref=" + address}
       />
-      <button className="py-3 px-6 text-xs font-medium text-white bg-tertiary duration-500 ease-in-out rounded-tr-sm rounded-br-sm">
+      <button
+        onClick={copyReferral}
+        className="py-3 px-6 text-xs font-medium text-white bg-tertiary duration-500 ease-in-out rounded-tr-sm rounded-br-sm"
+      >
         Copy
       </button>
     </div>
