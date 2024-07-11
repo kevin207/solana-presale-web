@@ -1,13 +1,10 @@
 "use client";
 import { getTotalRaised } from "@/utils/web3";
 import React, { useEffect, useState } from "react";
-import { config } from "@/providers/web3-provider";
-import { getChainId } from "@wagmi/core";
 
 export default function RaisedAmount({ refetch }: { refetch: boolean }) {
   const [raised, setRaised] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const chainId = getChainId(config);
 
   const calculatePercentage = () => {
     return Math.min((raised / 1000) * 100, 100);
@@ -22,7 +19,7 @@ export default function RaisedAmount({ refetch }: { refetch: boolean }) {
       setLoading(false);
     };
     getRaisedAmount();
-  }, [refetch, chainId]);
+  }, [refetch]);
 
   return loading ? (
     <div className="my-8 h-[50px] animate-pulse w-full rounded-full bg-gray-400" />

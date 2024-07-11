@@ -214,7 +214,7 @@ export const getUserPurchasedToken = async (
     ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
     tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const tokenAmount = ethPrice / tokenPrice;
+    const tokenAmount = (ethAmount * ethPrice) / tokenPrice;
     total += tokenAmount;
   }
   for (let i = 0; i < ethContractEvent2.length; i++) {
@@ -256,7 +256,7 @@ export const getUserPurchasedToken = async (
     toBlock: "latest",
   });
   for (let i = 0; i < avaxContractEvent1.length; i++) {
-    const event = ethContractEvent1[i];
+    const event = avaxContractEvent1[i];
     const topics = decodeEventLog({
       abi: presaleAbi,
       data: event.data,
@@ -269,11 +269,11 @@ export const getUserPurchasedToken = async (
     ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
     tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const tokenAmount = ethPrice / tokenPrice;
+    const tokenAmount = (ethAmount * ethPrice) / tokenPrice;
     total += tokenAmount;
   }
   for (let i = 0; i < avaxContractEvent2.length; i++) {
-    const event = ethContractEvent2[i];
+    const event = avaxContractEvent2[i];
     const topics = decodeEventLog({
       abi: presaleAbi,
       data: event.data,
@@ -311,7 +311,7 @@ export const getUserPurchasedToken = async (
     toBlock: "latest",
   });
   for (let i = 0; i < baseContractEvent1.length; i++) {
-    const event = ethContractEvent1[i];
+    const event = baseContractEvent1[i];
     const topics = decodeEventLog({
       abi: presaleAbi,
       data: event.data,
@@ -324,11 +324,11 @@ export const getUserPurchasedToken = async (
     ethPrice = Number(formatUnits(getBigInt(ethPrice), 18));
     tokenPrice = Number(formatUnits(getBigInt(tokenPrice), 6));
 
-    const tokenAmount = ethPrice / tokenPrice;
+    const tokenAmount = (ethAmount * ethPrice) / tokenPrice;
     total += tokenAmount;
   }
   for (let i = 0; i < baseContractEvent2.length; i++) {
-    const event = ethContractEvent2[i];
+    const event = baseContractEvent2[i];
     const topics = decodeEventLog({
       abi: presaleAbi,
       data: event.data,
@@ -431,12 +431,12 @@ export const getUserPurchasedToken = async (
     // @ts-expect-error
     let { ethAmount, ethPrice, tokenPrice, buyer } = bscContractEvent1[i].data;
 
-    if (buyer === walletAddress) {
+    if (buyer.toLowerCase() === walletAddress.toLowerCase()) {
       ethAmount = Number(formatUnits(BigInt(ethAmount), 18));
       ethPrice = Number(formatUnits(BigInt(ethPrice), 18));
       tokenPrice = Number(formatUnits(BigInt(tokenPrice), 6));
 
-      const tokenAmount = ethPrice / tokenPrice;
+      const tokenAmount = (ethAmount * ethPrice) / tokenPrice;
       total += tokenAmount;
     }
   }
@@ -444,7 +444,7 @@ export const getUserPurchasedToken = async (
     // @ts-expect-error
     let { usdtAmount, tokenPrice, buyer } = bscContractEvent2[i].data;
 
-    if (buyer === walletAddress) {
+    if (buyer.toLowerCase() === walletAddress.toLowerCase()) {
       usdtAmount = Number(formatUnits(BigInt(usdtAmount), 6));
       tokenPrice = Number(formatUnits(BigInt(tokenPrice), 6));
 
