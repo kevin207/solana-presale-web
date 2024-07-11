@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAccount, useBalance, useSwitchChain } from "wagmi";
-import { ConnectKitButton } from "connectkit";
-import { buyWithETH, buyWithUSDT, countReceivedToken } from "@/utils/web3";
+import { countReceivedToken } from "@/utils/web3";
 import { Address } from "viem";
 import PresaleCountdown from "./PresaleCountdown";
 import RaisedAmount from "./RaisedAmount";
@@ -10,59 +9,36 @@ import useWaitForTxAction from "@/hooks/waitTransaction";
 import PurchasedToken from "./PurchasedToken";
 import TokenSupply from "./TokenSupply";
 import TokenPriceAndChain from "./TokenPriceAndChain";
+import { getChainId } from "@wagmi/core";
+import { config } from "@/providers/web3-provider";
+import BuyTokenButton from "./BuyTokenButton";
 
 const PresaleForm = () => {
-  const { isConnecting, status, address } = useAccount();
+  const { status, address } = useAccount();
   const [selected, setSelected] = useState<string>("ETH");
   const [received, setReceived] = useState<string>("0");
   const [amount, setAmount] = useState<number>(0);
   const [transactionHash, setTransactionHash] = useState<Address | undefined>();
   const [refetch, setRefetch] = useState<boolean>(false);
   const { chains, switchChain } = useSwitchChain();
+  const chainId = getChainId(config);
+
+  const addressMap: { [key: number]: Address } = {
+    [chains[0].id]: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
+    [chains[1].id]: "0x4c45893f54b52faB271A6b0B78770b891fBfD336",
+    [chains[2].id]: "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+    [chains[3].id]: "0x22F2D35C812Ad4Fe5B8AA3658a5E3Fc1c3D7bA27",
+  };
+  const interfaceAddress = addressMap[chainId];
 
   const maxUsdt = useBalance({
     address: address,
-    token: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
+    token: interfaceAddress,
   }).data?.formatted;
   const maxEth = useBalance({
     address: address,
   }).data?.formatted;
 
-  const buyToken = async () => {
-    if (!amount || amount <= 0) return;
-    let result;
-
-    // ETH
-    if (selected === "ETH") {
-      if (amount > parseFloat(maxEth as string)) {
-        console.log("Insufficent Amount");
-        return;
-      }
-      result = await buyWithETH(`${amount}`);
-      if (result && result.includes("0x")) {
-        console.log("Success Buy With ETH!");
-        setAmount(0);
-        setTransactionHash(result);
-      } else {
-        console.log("Cancelled / Failed");
-      }
-    }
-    // USDT
-    else if (selected === "USDT") {
-      if (amount > parseFloat(maxUsdt as string)) {
-        console.log("Insufficent Amount");
-        return;
-      }
-      result = await buyWithUSDT(`${amount}`, address);
-      if (result && result.includes("0x")) {
-        console.log("Success Buy With USDT!");
-        setAmount(0);
-        setTransactionHash(result);
-      } else {
-        console.log("Cancelled / Failed");
-      }
-    }
-  };
   const action = () => {
     setRefetch(!refetch);
     setTransactionHash(undefined);
@@ -139,30 +115,16 @@ const PresaleForm = () => {
             />
           </div>
         </div>
-
-        {status === "disconnected" || isConnecting ? (
-          <ConnectKitButton.Custom>
-            {({ show }) => (
-              <button
-                onClick={show}
-                className="py-4 px-6 text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out w-full"
-              >
-                Connect Wallet To Buy Token
-              </button>
-            )}
-          </ConnectKitButton.Custom>
-        ) : (
-          <ConnectKitButton.Custom>
-            {() => (
-              <button
-                onClick={buyToken}
-                className="py-4 px-6 w-full text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out"
-              >
-                Buy Tokens With 45% Off
-              </button>
-            )}
-          </ConnectKitButton.Custom>
-        )}
+        <BuyTokenButton
+          maxEth={maxEth}
+          maxUsdt={maxUsdt}
+          amount={amount}
+          setAmount={setAmount}
+          userAddress={address}
+          interfaceAddress={interfaceAddress}
+          selected={selected}
+          setTransactionHash={setTransactionHash}
+        />
       </div>
 
       {/* TOTAL PURCHASED & CLAIM */}

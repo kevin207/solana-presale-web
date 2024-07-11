@@ -86,6 +86,7 @@ export const buyWithETH = async (amountOnEth: string) => {
 
 export const buyWithUSDT = async (
   amountOfUSDT: string,
+  interfaceAddress: Address,
   walletAddress: Address | undefined
 ) => {
   const usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 6);
@@ -93,7 +94,7 @@ export const buyWithUSDT = async (
   try {
     const approval = await readContract(config, {
       abi: usdtInterfaceAbi,
-      address: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
+      address: interfaceAddress,
       functionName: "allowance",
       args: [walletAddress, presaleAddress],
     });
@@ -101,7 +102,7 @@ export const buyWithUSDT = async (
     if (Number(approval) <= 0) {
       const approve = await writeContract(config, {
         abi: usdtInterfaceAbi,
-        address: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
+        address: interfaceAddress,
         functionName: "approve",
         args: [presaleAddress, "1000000000000000000000"],
       });
