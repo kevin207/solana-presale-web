@@ -15,6 +15,7 @@ export default function RaisedAmount({ refetch }: { refetch: boolean }) {
       setLoading(true);
 
       const res = await fetch("/api/raised-amount", {
+        cache: "no-cache",
         method: "GET",
       });
       const result = await res.json();

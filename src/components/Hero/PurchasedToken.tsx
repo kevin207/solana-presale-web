@@ -22,6 +22,7 @@ export default function PurchasedToken({
         setLoading(true);
 
         const res = await fetch(`/api/token-purchased?address=${address}`, {
+          cache: "no-cache",
           method: "GET",
         });
         const result = await res.json();
