@@ -55,5 +55,5 @@ export const economicsCardData = [
   },
 ];
 
-export const presaleAddress = "0xeBe953A43DAFFDA49F8cDD33adeC78A880144Ff1";
-export const tokenAddress = "0x68a3CcbEE1eF684323FcaF19Aac27Ec3A3d80DCe";
+export const presaleAddress = "0xDd7e136aCF7791c3494F6B7991f27984E0f619d9";
+export const tokenAddress = "0x5220E0E6ceAeD707Cbaaad160dE030827945C1cE";

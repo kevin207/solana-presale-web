@@ -25,10 +25,10 @@ const PresaleForm = () => {
   const chainId = getChainId(config);
 
   const addressMap: { [key: number]: Address } = {
-    [chains[0].id]: "0xbDeaD2A70Fe794D2f97b37EFDE497e68974a296d",
-    [chains[1].id]: "0x4c45893f54b52faB271A6b0B78770b891fBfD336",
-    [chains[2].id]: "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
-    [chains[3].id]: "0x22F2D35C812Ad4Fe5B8AA3658a5E3Fc1c3D7bA27",
+    [chains[0].id]: "0x937d3C2aB9C83E06e9731C674743c8a5872DF5B5",
+    [chains[1].id]: "0xCa7bA25356a7c9A4ea881bE7Fb716b1CB85B020e",
+    [chains[2].id]: "0xa328acE32066A143Ba30a4767a24C0408EAA618B",
+    [chains[3].id]: "0xCa7bA25356a7c9A4ea881bE7Fb716b1CB85B020e",
   };
   const interfaceAddress = addressMap[chainId];
 
