@@ -6,6 +6,8 @@ import { sepolia, avalancheFuji, baseSepolia } from "viem/chains";
 import presaleAbi from "../../../utils/presaleAbi.json";
 import { initializeMoralis } from "@/utils/moralis";
 
+export const dynamic = "force-dynamic";
+
 initializeMoralis();
 
 const ethPublicClient = createPublicClient({
