@@ -74,38 +74,43 @@ export const buyWithETH = async (amountOnEth: string) => {
   }
 };
 
-export const buyWithUSDT = async (
-  amountOfUSDT: string,
+export const checkAllowance = async (
   interfaceAddress: Address,
   walletAddress: Address | undefined
 ) => {
+  const approval = await readContract(config, {
+    abi: usdtInterfaceAbi,
+    address: interfaceAddress,
+    functionName: "allowance",
+    args: [walletAddress, presaleAddress],
+  });
+
+  if (Number(approval) <= 0) {
+    return false;
+  }
+
+  return true;
+};
+
+export const approveInterface = async (interfaceAddress: Address) => {
+  const approve = await writeContract(config, {
+    abi: usdtInterfaceAbi,
+    address: interfaceAddress,
+    functionName: "approve",
+    args: [presaleAddress, "1000000000000000000000"],
+  });
+
+  if (!approve) {
+    return null;
+  }
+
+  return approve;
+};
+
+export const buyWithUSDT = async (amountOfUSDT: string) => {
   const usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 6);
 
   try {
-    const approval = await readContract(config, {
-      abi: usdtInterfaceAbi,
-      address: interfaceAddress,
-      functionName: "allowance",
-      args: [walletAddress, presaleAddress],
-    });
-
-    // console.log(approval)
-
-    if (Number(approval) <= 0) {
-      const approve = await writeContract(config, {
-        abi: usdtInterfaceAbi,
-        address: interfaceAddress,
-        functionName: "approve",
-        args: [presaleAddress, "1000000000000000000000"],
-      });
-
-      console.log(approve)
-
-      if (!approve) {
-        return null;
-      }
-    }
-
     const result = await writeContract(config, {
       abi: presaleAbi,
       address: presaleAddress,

@@ -2,7 +2,12 @@ import React from "react";
 import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { Address } from "viem";
-import { buyWithETH, buyWithUSDT } from "@/utils/web3";
+import {
+  approveInterface,
+  buyWithETH,
+  buyWithUSDT,
+  checkAllowance,
+} from "@/utils/web3";
 import toast from "react-hot-toast";
 
 interface BuyTokenButtonProps {
@@ -50,17 +55,26 @@ export default function BuyTokenButton({
       return;
     }
 
-    const result = await buyWithUSDT(
-      `${amount}`,
-      interfaceAddress as Address,
-      userAddress
-    );
-    if (result && result.includes("0x")) {
-      toast.success("Successfully Buy Token!");
-      setAmount(0);
-      setTransactionHash(result);
+    const allowance = await checkAllowance(interfaceAddress, userAddress);
+
+    if (allowance) {
+      const result = await buyWithUSDT(`${amount}`);
+      if (result && result.includes("0x")) {
+        toast.success("Successfully Buy Token!");
+        setAmount(0);
+        setTransactionHash(result);
+      } else {
+        toast.error("Cancelled / Failed!");
+      }
     } else {
-      toast.error("Cancelled / Failed!");
+      const result = await approveInterface(interfaceAddress);
+      if (result && result.includes("0x")) {
+        toast.success("Approval Sucess!");
+        setAmount(0);
+        setTransactionHash(result);
+      } else {
+        toast.error("Cancelled / Failed!");
+      }
     }
   };
 
