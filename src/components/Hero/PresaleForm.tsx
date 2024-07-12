@@ -23,6 +23,7 @@ const PresaleForm = () => {
   const [refetch, setRefetch] = useState<boolean>(false);
   const { chains, switchChain } = useSwitchChain();
   const chainId = getChainId(config);
+  const [activeChain, setActiveChain] = useState<number>();
 
   const addressMap: { [key: number]: Address } = {
     [chains[0].id]: "0x937d3C2aB9C83E06e9731C674743c8a5872DF5B5",
@@ -54,6 +55,10 @@ const PresaleForm = () => {
     getReceivedToken();
   }, [amount, selected]);
 
+  useEffect(() => {
+    setActiveChain(chainId);
+  }, [chainId]);
+
   return (
     <div className="h-fit bg-violet-900/90 rounded-md w-full font-light">
       <div className="p-8">
@@ -76,7 +81,11 @@ const PresaleForm = () => {
                   selected === "ETH" && "text-main"
                 } cursor-pointer hover:text-main`}
               >
-                ETH
+                {activeChain === chains[1].id
+                  ? "AVAX"
+                  : activeChain === chains[2].id
+                  ? "BNB"
+                  : "ETH"}
               </span>{" "}
               /{" "}
               <span
