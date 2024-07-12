@@ -89,6 +89,8 @@ export const buyWithUSDT = async (
       args: [walletAddress, presaleAddress],
     });
 
+    // console.log(approval)
+
     if (Number(approval) <= 0) {
       const approve = await writeContract(config, {
         abi: usdtInterfaceAbi,
@@ -96,6 +98,9 @@ export const buyWithUSDT = async (
         functionName: "approve",
         args: [presaleAddress, "1000000000000000000000"],
       });
+
+      console.log(approve)
+
       if (!approve) {
         return null;
       }

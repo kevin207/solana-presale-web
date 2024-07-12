@@ -253,7 +253,7 @@ export async function GET() {
   }
   for (let i = 0; i < bscContractEvent2.length; i++) {
     // @ts-expect-error
-    let { usdtAmount } = baseContractEvent2[i].data;
+    let { usdtAmount } = bscContractEvent2[i].data;
     usdtAmount = Number(formatUnits(getBigInt(usdtAmount), 6));
     total += usdtAmount;
   }
