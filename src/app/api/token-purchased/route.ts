@@ -7,6 +7,8 @@ import presaleAbi from "../../../utils/presaleAbi.json";
 import { NextRequest } from "next/server";
 import { initializeMoralis } from "@/utils/moralis";
 
+export const dynamic = "force-dynamic";
+
 initializeMoralis();
 
 const ethPublicClient = createPublicClient({
