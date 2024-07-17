@@ -143,10 +143,12 @@ const PresaleForm = () => {
           <div className="w-full h-[1px] bg-violet-500" />
           <div className="flex flex-row gap-4 px-8 py-6 justify-between items-center">
             <PurchasedToken
+              chainId={chainId}
               address={address}
               refetch={refetch}
               status={status}
             />
+
             <button
               onClick={() => {
                 toast.error("Presale not ended!");
