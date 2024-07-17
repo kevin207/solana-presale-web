@@ -13,6 +13,7 @@ import { getChainId } from "@wagmi/core";
 import { config } from "@/providers/web3-provider";
 import BuyTokenButton from "./BuyTokenButton";
 import toast from "react-hot-toast";
+import ClaimToken from "./ClaimToken";
 
 const PresaleForm = () => {
   const { status, address } = useAccount();
@@ -148,15 +149,7 @@ const PresaleForm = () => {
               refetch={refetch}
               status={status}
             />
-
-            <button
-              onClick={() => {
-                toast.error("Presale not ended!");
-              }}
-              className="py-4 px-8 w-fit text-xs font-medium text-white bg-tertiary rounded-sm duration-500 ease-in-out"
-            >
-              Claim Token
-            </button>
+            <ClaimToken />
           </div>
         </>
       )}
