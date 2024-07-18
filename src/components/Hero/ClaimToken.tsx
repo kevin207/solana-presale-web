@@ -1,4 +1,4 @@
-import { claimToken, getPresaleEnded } from "@/utils/web3";
+import { claimToken, verifyCanClaim } from "@/utils/web3";
 import React from "react";
 import toast from "react-hot-toast";
 import { Address } from "viem";
@@ -12,9 +12,14 @@ export default function ClaimToken({
 }: ClaimTokenButtonProps) {
   const claimPurchasedToken = async () => {
     // REQUIRE PAUSED, PRESALE ENDED, OPEN TRADING
-    const presaleEnded = await getPresaleEnded();
-    if (!presaleEnded) {
-      toast.error("Presale not ended!");
+    const { presaleEnded, paused, tradeOpen } = await verifyCanClaim();
+    if (!presaleEnded || !paused || !tradeOpen) {
+      const errors = [];
+      if (!presaleEnded) errors.push("Presale not ended!");
+      if (!paused) errors.push("Contract is not paused!");
+      if (!tradeOpen) errors.push("Trading not opened yet!");
+
+      toast.error(errors.join(" "));
       return;
     }
 

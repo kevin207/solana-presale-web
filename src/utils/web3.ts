@@ -56,14 +56,26 @@ export const getTotalSupply = async () => {
   return adjustedValue;
 };
 
-export const getPresaleEnded = async () => {
-  const result = await readContract(config, {
+export const verifyCanClaim = async () => {
+  const presaleEnded = await readContract(config, {
     abi: presaleAbi,
     address: presaleAddress,
     functionName: "presaleEnded",
   });
 
-  return result as boolean;
+  const paused = await readContract(config, {
+    abi: presaleAbi,
+    address: presaleAddress,
+    functionName: "paused",
+  });
+
+  const tradeOpen = await readContract(config, {
+    abi: tokenAbi,
+    address: tokenAddress,
+    functionName: "tradeOpen",
+  });
+
+  return { presaleEnded, paused, tradeOpen };
 };
 
 export const getCurrentChainPurchasedToken = async (address: Address) => {
