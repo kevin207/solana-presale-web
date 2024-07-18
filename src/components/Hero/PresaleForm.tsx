@@ -12,7 +12,6 @@ import TokenPriceAndChain from "./TokenPriceAndChain";
 import { getChainId } from "@wagmi/core";
 import { config } from "@/providers/web3-provider";
 import BuyTokenButton from "./BuyTokenButton";
-import toast from "react-hot-toast";
 import ClaimToken from "./ClaimToken";
 
 const PresaleForm = () => {
