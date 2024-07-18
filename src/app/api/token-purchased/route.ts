@@ -178,7 +178,6 @@ export async function GET(request: NextRequest) {
     avaxContractEvent2,
     baseContractEvent2
   );
-
   for (let i = 0; i < combinedWithEth.length; i++) {
     const event = combinedWithEth[i];
     const topics = decodeEventLog({

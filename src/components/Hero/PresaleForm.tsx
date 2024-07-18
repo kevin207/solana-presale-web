@@ -148,7 +148,7 @@ const PresaleForm = () => {
               refetch={refetch}
               status={status}
             />
-            <ClaimToken />
+            <ClaimToken setTransactionHash={setTransactionHash} />
           </div>
         </>
       )}

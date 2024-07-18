@@ -18,7 +18,7 @@ interface BuyTokenButtonProps {
   maxUsdt: string | undefined;
   userAddress: Address | undefined;
   interfaceAddress: Address;
-  setTransactionHash: any;
+  setTransactionHash: (address: Address) => void;
 }
 
 export default function BuyTokenButton({
