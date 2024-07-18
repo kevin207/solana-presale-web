@@ -1,8 +1,7 @@
 import { presaleAddress, PUBLIC_CLIENTS } from "@/constants/common";
 import { getBigInt } from "ethers";
 import Moralis from "moralis";
-import { createPublicClient, decodeEventLog, formatUnits, http } from "viem";
-import { sepolia, avalancheFuji, baseSepolia } from "viem/chains";
+import { decodeEventLog, formatUnits } from "viem";
 import presaleAbi from "../../../utils/presaleAbi.json";
 import { NextRequest } from "next/server";
 import { initializeMoralis } from "@/utils/moralis";
@@ -10,19 +9,6 @@ import { initializeMoralis } from "@/utils/moralis";
 export const dynamic = "force-dynamic";
 
 initializeMoralis();
-
-const ethPublicClient = createPublicClient({
-  chain: sepolia,
-  transport: http(process.env.NEXT_PUBLIC_API_URL_ETH!),
-});
-const avaxPublicClient = createPublicClient({
-  chain: avalancheFuji,
-  transport: http(process.env.NEXT_PUBLIC_API_URL_AVAX!),
-});
-const basePublicClient = createPublicClient({
-  chain: baseSepolia,
-  transport: http(process.env.NEXT_PUBLIC_API_URL_BASE!),
-});
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

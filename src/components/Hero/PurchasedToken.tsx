@@ -22,6 +22,16 @@ export default function PurchasedToken({
 
   useEffect(() => {
     if (address) {
+      const getActiveChainPurchasedToken = async () => {
+        const currentPurchased = await getCurrentChainPurchasedToken(address);
+        setCurrentPurchased(currentPurchased);
+      };
+      getActiveChainPurchasedToken();
+    }
+  }, [address, chainId]);
+
+  useEffect(() => {
+    if (address) {
       const getPurchasedToken = async () => {
         setLoading(true);
         const res = await fetch(`/api/token-purchased?address=${address}`, {
@@ -36,18 +46,6 @@ export default function PurchasedToken({
       getPurchasedToken();
     }
   }, [address, refetch]);
-
-  useEffect(() => {
-    if (address) {
-      const getActiveChainPurchasedToken = async () => {
-        setLoading(true);
-        const currentPurchased = await getCurrentChainPurchasedToken(address);
-        setCurrentPurchased(currentPurchased);
-        setLoading(false);
-      };
-      getActiveChainPurchasedToken();
-    }
-  }, [address, chainId]);
 
   return loading ? (
     <div className="h-[45px] w-[150px] animate-pulse rounded-sm bg-gray-300" />

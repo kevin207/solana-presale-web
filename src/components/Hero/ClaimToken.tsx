@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 export default function ClaimToken() {
   const claimPurchasedToken = async () => {
+    // REQUIRE PAUSED, PRESALE ENDED, OPEN TRADING
     const presaleEnded = await getPresaleEnded();
     if (!presaleEnded) {
       toast.error("Presale not ended!");
@@ -13,7 +14,7 @@ export default function ClaimToken() {
     try {
       await claimToken();
     } catch (error) {
-      console.log(error);
+      toast.error("Cancelled / Failed!");
     }
   };
 
