@@ -31,7 +31,7 @@ export default function BuyTokenButton({
   interfaceAddress,
   setTransactionHash,
 }: BuyTokenButtonProps) {
-  const { isConnecting, status } = useAccount();
+  const { isConnecting, status, chainId } = useAccount();
 
   const buyWithNativeToken = async () => {
     if (amount > parseFloat(maxEth as string)) {
@@ -58,7 +58,7 @@ export default function BuyTokenButton({
     const allowance = await checkAllowance(interfaceAddress, userAddress);
 
     if (allowance) {
-      const result = await buyWithUSDT(`${amount}`);
+      const result = await buyWithUSDT(`${amount}`, chainId as number);
       if (result && result.includes("0x")) {
         toast.success("Successfully Buy Token!");
         setAmount(0);

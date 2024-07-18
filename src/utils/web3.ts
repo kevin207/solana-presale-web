@@ -152,8 +152,16 @@ export const approveInterface = async (interfaceAddress: Address) => {
   return approve;
 };
 
-export const buyWithUSDT = async (amountOfUSDT: string) => {
-  const usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 6);
+export const buyWithUSDT = async (amountOfUSDT: string, chainId: number) => {
+  let usdtAmountInWei;
+
+  if (chainId === 97) {
+    usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 18);
+  } else {
+    usdtAmountInWei = ethers.parseUnits(amountOfUSDT, 6);
+  }
+
+  console.log(usdtAmountInWei);
 
   try {
     const result = await writeContract(config, {
