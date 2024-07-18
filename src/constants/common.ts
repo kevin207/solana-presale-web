@@ -1,5 +1,5 @@
 import { createPublicClient, http } from "viem";
-import { sepolia, avalancheFuji, baseSepolia } from "viem/chains";
+import { sepolia, avalancheFuji, baseSepolia, bscTestnet } from "viem/chains";
 
 export const navigations = [
   { name: "About", path: "#about" },
@@ -70,6 +70,10 @@ export const PUBLIC_CLIENTS = [
   createPublicClient({
     chain: avalancheFuji,
     transport: http(process.env.NEXT_PUBLIC_API_URL_AVAX!),
+  }),
+  createPublicClient({
+    chain: bscTestnet,
+    transport: http(process.env.NEXT_PUBLIC_API_URL_BSC!),
   }),
 ];
 
