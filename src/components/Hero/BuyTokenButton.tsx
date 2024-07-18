@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectKitButton } from "connectkit";
 import { Address } from "viem";
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 interface BuyTokenButtonProps {
   selected: string;
   amount: number;
+  refetch: boolean;
   setAmount: any;
   maxEth: string | undefined;
   maxUsdt: string | undefined;
@@ -27,13 +28,19 @@ export default function BuyTokenButton({
   setAmount,
   maxEth,
   maxUsdt,
+  refetch,
   userAddress,
   interfaceAddress,
   setTransactionHash,
 }: BuyTokenButtonProps) {
   const { isConnecting, status, chainId } = useAccount();
+  const [allowance, setAllowance] = useState<boolean>(false);
 
   const buyWithNativeToken = async () => {
+    if (!amount || amount <= 0) {
+      toast.error("Invalid Amount!");
+      return;
+    }
     if (amount > parseFloat(maxEth as string)) {
       toast.error("Insufficent Amount!");
       return;
@@ -50,46 +57,56 @@ export default function BuyTokenButton({
   };
 
   const buyWithStableToken = async () => {
+    if (!amount || amount <= 0) {
+      toast.error("Invalid Amount!");
+      return;
+    }
     if (amount > parseFloat(maxUsdt as string)) {
       toast.error("Insufficent Amount!");
       return;
     }
 
-    const allowance = await checkAllowance(interfaceAddress, userAddress);
-
-    if (allowance) {
-      const result = await buyWithUSDT(`${amount}`, chainId as number);
-      if (result && result.includes("0x")) {
-        toast.success("Successfully Buy Token!");
-        setAmount(0);
-        setTransactionHash(result);
-      } else {
-        toast.error("Cancelled / Failed!");
-      }
+    const result = await buyWithUSDT(`${amount}`, chainId as number);
+    if (result && result.includes("0x")) {
+      toast.success("Successfully Buy Token!");
+      setAmount(0);
+      setTransactionHash(result);
     } else {
-      const result = await approveInterface(interfaceAddress);
-      if (result && result.includes("0x")) {
-        toast.success("Approval Sucess!");
-        setAmount(0);
-        setTransactionHash(result);
-      } else {
-        toast.error("Cancelled / Failed!");
-      }
+      toast.error("Cancelled / Failed!");
+    }
+  };
+
+  const makeApproval = async () => {
+    const result = await approveInterface(interfaceAddress);
+    if (result && result.includes("0x")) {
+      toast.success("Approval Success!");
+      setTransactionHash(result);
+    } else {
+      toast.error("Cancelled / Failed!");
     }
   };
 
   const buyToken = async () => {
-    if (!amount || amount <= 0) {
-      toast.error("Invalid Amount!");
-      return;
-    }
-
     if (selected === "ETH") {
       await buyWithNativeToken();
     } else if (selected === "USDT") {
-      await buyWithStableToken();
+      if (!allowance) {
+        await makeApproval();
+      } else {
+        await buyWithStableToken();
+      }
     }
   };
+
+  useEffect(() => {
+    if (interfaceAddress && userAddress) {
+      const getAllowance = async () => {
+        const result = await checkAllowance(interfaceAddress, userAddress);
+        setAllowance(result);
+      };
+      getAllowance();
+    }
+  }, [chainId, refetch, userAddress, selected]);
 
   return status === "disconnected" || isConnecting ? (
     <ConnectKitButton.Custom>
@@ -109,7 +126,9 @@ export default function BuyTokenButton({
           onClick={buyToken}
           className="py-4 px-6 w-full text-xs font-medium text-white bg-main rounded-sm hover:bg-secondary duration-500 ease-in-out"
         >
-          Buy Tokens With 45% Off
+          {selected === "USDT" && !allowance
+            ? "Approve Interface"
+            : "Buy Tokens With 45% Off"}
         </button>
       )}
     </ConnectKitButton.Custom>

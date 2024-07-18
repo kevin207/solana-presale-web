@@ -126,6 +126,7 @@ const PresaleForm = () => {
           </div>
         </div>
         <BuyTokenButton
+          refetch={refetch}
           maxEth={maxEth}
           maxUsdt={maxUsdt}
           amount={amount}

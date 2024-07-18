@@ -96,7 +96,7 @@ export const getCurrentChainPurchasedToken = async (address: Address) => {
 
     return adjustedValue;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return 0;
   }
 };

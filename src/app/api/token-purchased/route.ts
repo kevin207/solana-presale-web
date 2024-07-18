@@ -8,26 +8,41 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const address = searchParams.get("address");
 
-  const [allocationEth, allocationBase, allocationAvax] = await Promise.all([
-    PUBLIC_CLIENTS[0].readContract({
+  let allocationEth;
+  try {
+    allocationEth = await PUBLIC_CLIENTS[0].readContract({
       address: presaleAddress,
       abi: presaleAbi,
       functionName: "checkAllocation",
       args: [address],
-    }),
-    PUBLIC_CLIENTS[1].readContract({
+    });
+  } catch (error) {
+    allocationEth = BigInt(0);
+  }
+
+  let allocationBase;
+  try {
+    allocationBase = await PUBLIC_CLIENTS[1].readContract({
       address: presaleAddress,
       abi: presaleAbi,
       functionName: "checkAllocation",
       args: [address],
-    }),
-    PUBLIC_CLIENTS[2].readContract({
+    });
+  } catch (error) {
+    allocationBase = BigInt(0);
+  }
+
+  let allocationAvax;
+  try {
+    allocationAvax = await PUBLIC_CLIENTS[2].readContract({
       address: presaleAddress,
       abi: presaleAbi,
       functionName: "checkAllocation",
       args: [address],
-    }),
-  ]);
+    });
+  } catch (error) {
+    allocationAvax = BigInt(0);
+  }
 
   let allocationBsc;
   try {
