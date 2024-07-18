@@ -1,3 +1,6 @@
+import { createPublicClient, http } from "viem";
+import { sepolia, avalancheFuji, baseSepolia } from "viem/chains";
+
 export const navigations = [
   { name: "About", path: "#about" },
   { name: "Overview", path: "#faq" },
@@ -53,6 +56,21 @@ export const economicsCardData = [
     amount: "ETH, BTC, USD",
     title: "ACCEPTED CURRENCY",
   },
+];
+
+export const PUBLIC_CLIENTS = [
+  createPublicClient({
+    chain: sepolia,
+    transport: http(process.env.NEXT_PUBLIC_API_URL_ETH!),
+  }),
+  createPublicClient({
+    chain: baseSepolia,
+    transport: http(process.env.NEXT_PUBLIC_API_URL_BASE!),
+  }),
+  createPublicClient({
+    chain: avalancheFuji,
+    transport: http(process.env.NEXT_PUBLIC_API_URL_AVAX!),
+  }),
 ];
 
 export const presaleAddress = "0xD1Dfd274f99efeC41b389C8bc0ACF137F6A20626";

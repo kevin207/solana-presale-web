@@ -1,26 +1,11 @@
-import { presaleAddress } from "@/constants/common";
+import { presaleAddress, PUBLIC_CLIENTS } from "@/constants/common";
 import { getBigInt } from "ethers";
 import Moralis from "moralis";
-import { createPublicClient, decodeEventLog, formatUnits, http } from "viem";
-import { sepolia, avalancheFuji, baseSepolia } from "viem/chains";
+import { decodeEventLog, formatUnits } from "viem";
 import presaleAbi from "../../../utils/presaleAbi.json";
 import { initializeMoralis } from "@/utils/moralis";
 
 export const dynamic = "force-dynamic";
-export const PUBLIC_CLIENTS = [
-  createPublicClient({
-    chain: sepolia,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_ETH!),
-  }),
-  createPublicClient({
-    chain: baseSepolia,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_BASE!),
-  }),
-  createPublicClient({
-    chain: avalancheFuji,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_AVAX!),
-  }),
-];
 
 initializeMoralis();
 
