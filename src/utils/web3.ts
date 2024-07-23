@@ -75,7 +75,7 @@ export const verifyCanClaim = async () => {
     functionName: "paused",
   });
 
-  const tradeOpen = await PUBLIC_CLIENTS[3].readContract({
+  const tradeOpen = await PUBLIC_CLIENTS[0].readContract({
     abi: tokenAbi,
     address: tokenAddress,
     functionName: "tradeOpen",
