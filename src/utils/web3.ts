@@ -5,7 +5,13 @@ import tokenAbi from "./tokenAbi.json";
 import { ethers } from "ethers";
 import { config } from "@/providers/web3-provider";
 import { Address } from "viem";
-import { presaleAddress, tokenAddress } from "@/constants/common";
+import {
+  presaleAddress,
+  PUBLIC_CLIENTS,
+  tokenAddress,
+} from "@/constants/common";
+
+import { bscTestnet } from "wagmi/chains";
 
 async function getLatestEthPrice(): Promise<number> {
   const result = await readContract(config, {
@@ -69,11 +75,21 @@ export const verifyCanClaim = async () => {
     functionName: "paused",
   });
 
-  const tradeOpen = await readContract(config, {
+  const tradeOpen = await PUBLIC_CLIENTS[3].readContract({
     abi: tokenAbi,
     address: tokenAddress,
     functionName: "tradeOpen",
   });
+
+  // const tradeOpen = await readContract(
+  //   config,
+
+  //   {
+  //     abi: tokenAbi,
+  //     address: tokenAddress,
+  //     functionName: "tradeOpen",
+  //   }
+  // );
 
   return { presaleEnded, paused, tradeOpen };
 };
