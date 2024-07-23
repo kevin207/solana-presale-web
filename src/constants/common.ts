@@ -78,4 +78,4 @@ export const PUBLIC_CLIENTS = [
 ];
 
 export const presaleAddress = "0xD1Dfd274f99efeC41b389C8bc0ACF137F6A20626";
-export const tokenAddress = "0x3ECEb0D98EFfA3E447b30150961C5756345f8120";
+export const tokenAddress = "0x51287DE41c6F60b3f6E920D16A7F9912b9ccb459";
