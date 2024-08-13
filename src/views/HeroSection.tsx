@@ -21,7 +21,7 @@ const HeroSection = () => {
             </p>
             <ButtonList />
             <CommunityList />
-            <ReferralButton />
+            {/* <ReferralButton /> */}
           </div>
 
           {/* FORM */}

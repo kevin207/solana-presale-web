@@ -3,28 +3,28 @@ import React, { useEffect, useState } from "react";
 
 export default function RaisedAmount({ refetch }: { refetch: boolean }) {
   const [raised, setRaised] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const calculatePercentage = () => {
     return Math.min((raised / 1000) * 100, 100);
   };
   const percentage = calculatePercentage();
 
-  useEffect(() => {
-    const getRaisedAmount = async () => {
-      setLoading(true);
+  // useEffect(() => {
+  //   const getRaisedAmount = async () => {
+  //     setLoading(true);
 
-      const res = await fetch("/api/raised-amount", {
-        cache: "no-cache",
-        method: "GET",
-      });
-      const result = await res.json();
-      setRaised(result);
+  //     const res = await fetch("/api/raised-amount", {
+  //       cache: "no-cache",
+  //       method: "GET",
+  //     });
+  //     const result = await res.json();
+  //     setRaised(result);
 
-      setLoading(false);
-    };
-    getRaisedAmount();
-  }, [refetch]);
+  //     setLoading(false);
+  //   };
+  //   getRaisedAmount();
+  // }, [refetch]);
 
   return loading ? (
     <div className="my-8 h-[50px] animate-pulse w-full rounded-full bg-gray-300" />

@@ -1,9 +1,10 @@
+"use client";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import MobileNav from "./MobileNav";
 import { navigations } from "@/constants/common";
-import ConnectWallet from "./ConnectWallet";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const Navbar = () => {
   return (
@@ -39,7 +40,13 @@ const Navbar = () => {
         </ul>
 
         <div className="flex flex-row items-center justify-center">
-          <ConnectWallet />
+          <WalletMultiButton
+            style={{
+              backgroundColor: "rgba(0,0,0,0.6)",
+              paddingLeft: 30,
+              paddingRight: 30,
+            }}
+          />
           <MobileNav />
         </div>
       </div>

@@ -1,5 +1,5 @@
-import { createPublicClient, http } from "viem";
-import { sepolia, avalancheFuji, baseSepolia, bscTestnet } from "viem/chains";
+import { PublicKey } from "@solana/web3.js";
+import solanaIcoIdl from "../idl/solana_ico.json";
 
 export const navigations = [
   { name: "About", path: "#about" },
@@ -9,7 +9,7 @@ export const navigations = [
   { name: "Roadmap", path: "#roadmap" },
   { name: "Team", path: "#team" },
   { name: "FAQ", path: "#faq" },
-  { name: "Portal Bridge", path: "https://token-bridge-dusky.vercel.app" },
+  // { name: "Portal Bridge", path: "https://token-bridge-dusky.vercel.app" },
 ];
 
 export const features = [
@@ -59,24 +59,21 @@ export const economicsCardData = [
   },
 ];
 
-export const PUBLIC_CLIENTS = [
-  createPublicClient({
-    chain: sepolia,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_ETH!),
-  }),
-  createPublicClient({
-    chain: baseSepolia,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_BASE!),
-  }),
-  createPublicClient({
-    chain: avalancheFuji,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_AVAX!),
-  }),
-  createPublicClient({
-    chain: bscTestnet,
-    transport: http(process.env.NEXT_PUBLIC_API_URL_BSC!),
-  }),
-];
+export const DATA_SEED = "data";
+export const presaleData = new PublicKey("ATZ7gZARFNh2LfFUiCPGCPfb5nbW82WdXNk7Mf1cHebe");
 
-export const presaleAddress = "0xD1Dfd274f99efeC41b389C8bc0ACF137F6A20626";
-export const tokenAddress = "0x51287DE41c6F60b3f6E920D16A7F9912b9ccb459";
+export const commitmentLevel = "confirmed";
+export const adminPublicKey = new PublicKey(
+  "EEaeK2tFXduTLbm8xqFTFRWFmYjop8fygqACRZxq9o69"
+);
+
+export const presaleProgramId = new PublicKey(solanaIcoIdl.metadata.address);
+export const presaleProgramInterface = JSON.parse(JSON.stringify(solanaIcoIdl));
+
+export const tokenAddress = new PublicKey(
+  "46sHcKzhoCJ14j3RiCZXFR2F6JkstS3Ttvou73terTRy"
+);
+
+export const usdtAddress = new PublicKey(
+  "E7cqrG1x3gkLUvwWDqorZHCr687p5a7ugkzuAYZWe1VP"
+);

@@ -6,7 +6,7 @@ import React from "react";
 const ConnectWallet = () => {
   return (
     <>
-      <ConnectKitButton.Custom>
+      {/* <ConnectKitButton.Custom>
         {({ show, truncatedAddress, isConnected }) => (
           <button
             onClick={show}
@@ -22,7 +22,7 @@ const ConnectWallet = () => {
             )}
           </button>
         )}
-      </ConnectKitButton.Custom>
+      </ConnectKitButton.Custom> */}
     </>
   );
 };
