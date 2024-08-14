@@ -8,6 +8,7 @@ import {
   presaleProgramId,
   presaleProgramInterface,
   tokenAddress,
+  usdtAddress,
 } from "@/constants/common";
 import { Program, AnchorProvider, web3 } from "@project-serum/anchor";
 
@@ -158,13 +159,12 @@ export const buyWithUsdt = async (
     provider
   ) as Program<SolanaIco>;
 
+
   const [ico_ata_for_ico_program, bump_ico] =
     web3.PublicKey.findProgramAddressSync(
       [tokenAddress.toBuffer()],
       program.programId
     );
-
-  console.log("ico ata: ", ico_ata_for_ico_program.toBase58());
 
   const [data] = web3.PublicKey.findProgramAddressSync(
     [Buffer.from(DATA_SEED), wallet.publicKey.toBuffer()],
@@ -175,36 +175,39 @@ export const buyWithUsdt = async (
     mint: tokenAddress,
     owner: wallet.publicKey,
   });
+  const usdt_ata_for_admin = await getAssociatedTokenAddress(
+    usdtAddress,
+    program.programId
+  );
+  const usdt_ata_for_user = await getAssociatedTokenAddress(
+    usdtAddress,
+    wallet.publicKey
+  );
+  try {
+    await getAccount(connection, usdt_ata_for_user);
+  } catch (error) {
+    return null
+  }
 
-  // const usdt_ata_for_admin = await spltoken.getOrCreateAssociatedTokenAccount(
-  //   PROGRAM.provider.connection,
-  //   PAYER_WALLET,
-  //   USDT_MINT,
-  //   PROGRAM.programId
-  // )
-  
-  // const usdt_ata_for_user = await spltoken.getOrCreateAssociatedTokenAccount(
-  //   PROGRAM.provider.connection,
-  //   PAYER_WALLET,
-  //   USDT_MINT,
-  //   PAYER
-  // )
+  console.log("Ico ata for user", ico_ata_for_user.toBase58())
+  console.log("Usdt ata for admin", usdt_ata_for_admin.toBase58())
+  console.log("Usdt ata for user", usdt_ata_for_user.toBase58())
 
   const context = {
     icoAtaForIcoProgram: ico_ata_for_ico_program,
     data,
     icoMint: tokenAddress,
     icoAtaForUser: ico_ata_for_user,
-    // usdtAtaForUser: usdt_ata_for_user.address,
-    // usdtAtaForAdmin: usdt_ata_for_admin.address,
+    usdtAtaForUser: usdt_ata_for_user,
+    usdtAtaForAdmin: usdt_ata_for_admin,
     user: wallet.publicKey,
     tokenProgram: TOKEN_PROGRAM_ID,
   };
 
   const txHash = await program.methods
-    .buyWithUsdt(bump_ico, new BN(quantity * 10 ** 9))
+    .buyWithUsdt(bump_ico, new BN(quantity * 10 ** 6))
     .accounts(context)
     .rpc();
 
-  console.log(txHash);
+  return txHash
 };

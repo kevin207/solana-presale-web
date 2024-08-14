@@ -1,4 +1,4 @@
-import { buyWithSol } from "@/utils/solana";
+import { buyWithSol, buyWithUsdt } from "@/utils/solana";
 import {
   AnchorWallet,
   useAnchorWallet,
@@ -23,20 +23,27 @@ export default function BuyTokenButton({
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
 
-  // useEffect(() => {
-  //   if (interfaceAddress && userAddress) {
-  //     const getAllowance = async () => {
-  //       const result = await checkAllowance(interfaceAddress, userAddress);
-  //       setAllowance(result);
-  //     };
-  //     getAllowance();
-  //   }
-  // }, [chainId, refetch, userAddress, selected]);
-
   const buyToken = async () => {
-    await buyWithSol(connection, anchorWallet as AnchorWallet, amount);
-    toast.success("Succesfully buy with SOL");
-    setAmount(0);
+    console.log(selected);
+
+    if (selected === "SOL") {
+      await buyWithSol(connection, anchorWallet as AnchorWallet, amount);
+      toast.success("Succesfully buy with SOL");
+      setAmount(0);
+    } else if (selected === "USDT") {
+      const transaction = await buyWithUsdt(
+        connection,
+        anchorWallet as AnchorWallet,
+        amount
+      );
+
+      if (transaction) {
+        toast.success("Succesfully buy with USDT");
+        setAmount(0);
+      } else {
+        toast.error("Failed to buy with USDT");
+      }
+    }
   };
 
   return (
